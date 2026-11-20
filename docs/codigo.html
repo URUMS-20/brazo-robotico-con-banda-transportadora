@@ -14,7 +14,7 @@
 </div>
 
 <h2 id="estructura">1. Estructura</h2>
-<div class="tabla"><table>
+<div class="tabla"><table class="dos">
 <thead><tr><th>Ruta</th><th>Qué contiene</th></tr></thead>
 <tbody>
 <tr><td><a data-repo="firmware_esp32/"><code>firmware_esp32/</code></a></td><td>Proyecto PlatformIO. <code>src/main.cpp</code> tiene todo el firmware: protocolo, límites, HOME, memoria, perfil de movimiento y banda.</td></tr>
@@ -53,7 +53,7 @@ python app.py</code></pre></div></li>
 
 <h2 id="protocolo">4. Protocolo serie (115200 baudios)</h2>
 <p>Una orden por línea. Puedes probarlo a mano en el monitor serie, con el servidor cerrado.</p>
-<div class="tabla"><table>
+<div class="tabla"><table class="dos">
 <thead><tr><th>Laptop → ESP32</th><th>Acción</th></tr></thead>
 <tbody>
 <tr><td><code>J&lt;i&gt; &lt;g&gt;</code></td><td>Mover la articulación i (0 a 5) a g grados</td></tr>
@@ -66,7 +66,7 @@ python app.py</code></pre></div></li>
 <tr><td><code>B &lt;-100..100&gt;</code> · <code>B?</code></td><td>Potencia de la banda con signo · consultar</td></tr>
 <tr><td><code>?</code> · <code>C</code></td><td>Pedir objetivos y posición · pedir configuración</td></tr>
 </tbody></table></div>
-<div class="tabla"><table>
+<div class="tabla"><table class="dos">
 <thead><tr><th>ESP32 → Laptop</th><th>Significado</th></tr></thead>
 <tbody>
 <tr><td><code>LISTO v2 cfg=...</code></td><td>Arranque (<code>memoria</code> o <code>fabrica</code>)</td></tr>

@@ -14,7 +14,8 @@
     { href: 'ensamblaje.html',      texto: 'Ensamblaje',            icono: 'bi-wrench-adjustable' },
     { href: 'conexiones.html',      texto: 'Conexiones',            icono: 'bi-diagram-3' },
     { href: 'codigo.html',          texto: 'Códigos',               icono: 'bi-code-slash' },
-    { href: 'cad.html',             texto: 'Diseño CAD',            icono: 'bi-box' }
+    { href: 'cad.html',             texto: 'Diseño CAD',            icono: 'bi-box' },
+    { href: 'celula.html',          texto: 'Célula (video)',        icono: 'bi-play-circle' }
   ];
 
   var actual = (location.pathname.split('/').pop() || 'index.html');
@@ -29,7 +30,7 @@
     host.innerHTML =
       '<header class="cab"><div class="wrap">' +
       '<a class="marca" href="index.html"><i class="bi bi-robot" aria-hidden="true"></i><span>' + SITIO.nombre + '</span></a>' +
-      '<button class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="menuNav"><i class="bi bi-list" aria-hidden="true"></i></button>' +
+      '<button class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="menuNav"><i class="bi bi-list" aria-hidden="true"></i> Menú</button>' +
       '<nav id="menuNav" aria-label="Principal"><ul>' + items + '</ul></nav>' +
       '</div></header>';
     var btn = document.getElementById('menuBtn'), nav = document.getElementById('menuNav');
@@ -76,7 +77,19 @@
     });
   }
 
+  // <button data-seek="42"> salta a ese segundo del <video id="video">
+  function saltosDeVideo() {
+    var v = document.getElementById('video');
+    if (!v) return;
+    document.querySelectorAll('[data-seek]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        v.currentTime = Number(b.getAttribute('data-seek')) || 0;
+        v.play(); v.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
-    crearCabecera(); crearPie(); enlazarRepo(); botonesCopiar();
+    crearCabecera(); crearPie(); enlazarRepo(); botonesCopiar(); saltosDeVideo();
   });
 })();
