@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1117"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link rel="stylesheet" href="assets/css/style.css">
+<title>Banda transportadora · Brazo Robótico The Genesis</title>
+<meta name="description" content="Banda transportadora modular de 111 mm: componentes, ensamblaje, fotos reales y puesta en marcha.">
+<style>
+.galeria{display:grid;gap:12px;grid-template-columns:1fr 1.6fr;align-items:start}
+.galeria figure{margin:0}
+.galeria img,.etapa img{width:100%;height:auto;display:block;border-radius:12px;border:1px solid var(--borde)}
+.galeria figcaption,.etapa figcaption{color:var(--suave);font-size:.85rem;margin-top:6px}
+.galeria .col{display:grid;gap:12px}
+.etapa{display:grid;gap:14px;grid-template-columns:1fr 1fr;align-items:center;background:var(--panel);border:1px solid var(--borde);border-radius:var(--radio);padding:14px;margin-bottom:12px}
+.etapa h3{margin:.1em 0 .3em}.etapa p{margin:.3em 0;color:var(--suave)}
+.ok{display:inline-flex;align-items:center;gap:8px;background:color-mix(in srgb,var(--acento2) 16%,transparent);border:1px solid var(--acento2);color:var(--acento2);border-radius:99px;padding:5px 14px;font-weight:700}
+.checks{list-style:none;padding:0}.checks li{padding:10px 12px 10px 40px;position:relative;background:var(--panel);border:1px solid var(--borde);border-radius:10px;margin-bottom:8px}
+.checks li::before{content:"\F26A";font-family:"bootstrap-icons";position:absolute;left:12px;top:9px;color:var(--acento2)}
+@media (max-width:760px){.galeria,.etapa{grid-template-columns:1fr}}
+</style>
+</head><body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div id="cabecera"></div>
+<main id="contenido"><div class="wrap">
+<div class="cab-pagina"><span class="etiqueta">Banda transportadora</span><h1>Banda modular de 111 mm</h1><p>Diseñada, impresa en 3D, armada, probada y funcionando.</p></div>
+<p><span class="ok"><i class="bi bi-check-circle-fill"></i> Armada, probada y funcionando</span></p>
+
+<div class="galeria">
+  <figure><img src="assets/img/banda_vista_superior.jpg" alt="Banda vista desde arriba: eslabones rojos, azules y negros" loading="lazy"><figcaption>Vista superior: cadena de 68 eslabones.</figcaption></figure>
+  <div class="col">
+    <figure><img src="assets/img/banda_lateral.jpg" alt="Lateral de la banda con tensor amarillo y patas" loading="lazy"><figcaption>Lateral: tensor amarillo y patas de apoyo.</figcaption></figure>
+    <figure><img src="assets/img/banda_con_carga.jpg" alt="Banda transportando una lata y una caja" loading="lazy"><figcaption>Transportando carga real.</figcaption></figure>
+  </div>
+</div>
+
+<div class="dato">
+  <div><b>68</b><span>eslabones</span></div>
+  <div><b>4</b><span>rodamientos 627ZZ</span></div>
+  <div><b>6 V</b><span>motor N20 · 100 rpm</span></div>
+  <div><b>101</b><span>piezas impresas</span></div>
+</div>
+
+<h2 id="como-funciona">1. Cómo funciona</h2>
+<p>Un motorreductor <strong>N20</strong> de 6 V gira la rueda motriz, que arrastra la cadena de eslabones. El otro extremo tiene un rodillo libre con tensores ajustables. El ESP32 lo controla con el puente H TC1508A: la potencia es un PWM y el sentido de giro se invierte intercambiando cuál pin está activo. Ver <a href="conexiones.html">conexiones</a> y la <a href="funcionamiento.html#banda">protección por pérdida de comunicación</a>.</p>
+
+<h2 id="materiales">2. Materiales</h2>
+<div class="tabla"><table>
+<thead><tr><th>Cant.</th><th>Componente</th><th>Uso</th></tr></thead>
+<tbody>
+<tr><td>101</td><td>Piezas impresas en PLA (29 tipos)</td><td>Chasis, rodillos, ejes, tensores y eslabones</td></tr>
+<tr><td>68</td><td>Eslabón nivelado</td><td>23 negros, 23 azules y 22 rojos</td></tr>
+<tr><td>4</td><td>Rodamiento 627ZZ · 7 × 22 × 7 mm</td><td>Apoyo de los ejes</td></tr>
+<tr><td>1</td><td>Motorreductor N20 · 6 V · 100 rpm</td><td>Accionamiento</td></tr>
+<tr><td>24</td><td>Tornillo M3 × 20</td><td>Guías a paredes</td></tr>
+<tr><td>6</td><td>Tornillo M3 × 12</td><td>Tensores (4) y soporte del motor (2)</td></tr>
+<tr><td>16</td><td>Tornillo M4 × 20</td><td>Conectores laterales</td></tr>
+</tbody></table></div>
+<p class="leyenda">Los tornillos roscan directo en los barrenos de PLA: no se usan tuercas. Impresión recomendada: PLA, capa 0.20 mm, 3 paredes, relleno 20–25 %.</p>
+
+<h2 id="ensamblaje">3. Ensamblaje en 6 etapas</h2>
+<div class="etapa"><img src="assets/img/montaje/etapa1.jpg" alt="Etapa 1: chasis" loading="lazy"><div><h3>1 · Presentar el chasis</h3><p>Paredes N y P, guías, conectores y patas. Las paredes quedan paralelas y las guías miran hacia la cadena.</p></div></div>
+<div class="etapa"><img src="assets/img/montaje/etapa2.jpg" alt="Etapa 2: rodillos" loading="lazy"><div><h3>2 · Presentar los rodillos</h3><p>Rueda motriz del lado del motor y rodillo libre del lado del tensor, con sus agujeros alineados.</p></div></div>
+<div class="etapa"><img src="assets/img/montaje/etapa3.jpg" alt="Etapa 3: ejes y baleros" loading="lazy"><div><h3>3 · Ejes y después baleros</h3><p>Se insertan los ejes, los muñones y los cuatro 627ZZ, presionando siempre sobre el aro exterior.</p></div></div>
+<div class="etapa"><img src="assets/img/montaje/etapa4.jpg" alt="Etapa 4: soporte y motor" loading="lazy"><div><h3>4 · Soporte y motor</h3><p>El motor N20, desconectado, entra en su soporte y su eje D engrana con el acoplamiento.</p></div></div>
+<div class="etapa"><img src="assets/img/montaje/etapa5.jpg" alt="Etapa 5: cadena" loading="lazy"><div><h3>5 · Ensamblar la cadena</h3><p>Primero se prueban dos o tres eslabones. Después se alternan negro, azul y rojo y se cierra la cadena.</p></div></div>
+<div class="etapa"><img src="assets/img/montaje/etapa6.jpg" alt="Etapa 6: tensores" loading="lazy"><div><h3>6 · Tensores y ajuste</h3><p>Se colocan al final. Se gira la banda a mano varias vueltas y solo entonces se prueba con 6 V.</p></div></div>
+<p class="leyenda">Imágenes de la animación de montaje hecha en Blender a partir del modelo de Fusion.</p>
+
+<h2 id="verificacion">4. Verificación final</h2>
+<ul class="checks">
+<li>La cadena está centrada y los eslabones articulan sin grietas.</li>
+<li>Los cuatro rodamientos giran sin rozar sus alojamientos.</li>
+<li>Los rodillos están alineados y la cadena no salta.</li>
+<li>El soporte del motor está firme y las puntas de los tornillos no interfieren.</li>
+<li>El tensor conserva margen y la cadena gira varias vueltas a mano.</li>
+<li>El cableado queda lejos de la cadena y la fuente es de 6 V.</li>
+</ul>
+<div class="alerta"><strong>Detén la prueba si…</strong>la banda se bloquea, salta dientes, aprieta un lateral, el motor se calienta o hay ruido anormal. Corta la alimentación y revisa.</div>
+
+<h2 id="validacion">5. Resultado de la validación</h2>
+<p>La banda fue armada siguiendo esta guía y probada por el equipo el <strong>20 de noviembre de 2026</strong>. Funciona correctamente y transporta carga real.</p>
+<ul class="checks">
+<li>Motor N20 a 6 V DC: funcionamiento correcto.</li>
+<li>Cadena de 68 eslabones y cuatro rodamientos 627ZZ girando sin roce.</li>
+<li>Transporte de carga real (lata y caja) comprobado.</li>
+</ul>
+
+<h3>Recomendaciones de uso</h3>
+<ul>
+<li>Alimenta el motor con 6 V DC y no lo excedas. El puente H TC1508A admite como máximo 7.2 V.</li>
+<li>Antes de cada uso, gira la banda una vuelta a mano con el motor desconectado.</li>
+<li>Revisa de vez en cuando el tensor, los eslabones y los tornillos que roscan en PLA.</li>
+<li>La interfaz regula la banda por potencia (PWM). Sin encoder, la velocidad real depende de la carga y de la alimentación.</li>
+</ul>
+<div class="nota"><strong>Mejoras futuras</strong>Medir y registrar la velocidad en cm/s, agregar un sensor o encoder, una caja de control para el cableado y la base alta para integrarla con el brazo.</div>
+
+<h2 id="descargas">6. Archivos de diseño</h2>
+<div class="pendiente"><strong>Próximamente</strong>Aquí se enlazarán los STL de las 29 piezas, el archivo de Fusion y el de Blender.</div>
+</div></main>
+<div id="pie"></div>
+<script src="assets/js/main.js"></script>
+</body></html>

@@ -12,10 +12,13 @@
     { href: 'index.html',           texto: 'Inicio',                icono: 'bi-house' },
     { href: 'funcionamiento.html',  texto: 'Cómo funciona',         icono: 'bi-gear-wide-connected' },
     { href: 'ensamblaje.html',      texto: 'Ensamblaje',            icono: 'bi-wrench-adjustable' },
+    { href: 'banda.html',           texto: 'Banda',                 icono: 'bi-arrow-left-right' },
+    { href: 'control.html',         texto: 'Control',               icono: 'bi-sliders' },
     { href: 'conexiones.html',      texto: 'Conexiones',            icono: 'bi-diagram-3' },
     { href: 'codigo.html',          texto: 'Códigos',               icono: 'bi-code-slash' },
     { href: 'cad.html',             texto: 'Diseño CAD',            icono: 'bi-box' },
-    { href: 'celula.html',          texto: 'Célula (video)',        icono: 'bi-play-circle' }
+    { href: 'celula.html',          texto: 'Célula (video)',        icono: 'bi-play-circle' },
+    { href: 'origen.html',          texto: 'Origen',                icono: 'bi-people' }
   ];
 
   var actual = (location.pathname.split('/').pop() || 'index.html');

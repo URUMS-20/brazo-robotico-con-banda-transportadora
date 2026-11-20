@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1117"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link rel="stylesheet" href="assets/css/style.css">
+<title>Panel de control · Brazo Robótico The Genesis</title>
+<meta name="description" content="Cómo abrir el panel web que controla el brazo y la banda, y cómo elegir el puerto COM del ESP32.">
+</head><body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div id="cabecera"></div>
+<main id="contenido"><div class="wrap">
+<div class="cab-pagina"><span class="etiqueta">Control</span><h1>Panel de control del brazo y la banda</h1><p>Un solo panel web para mover las articulaciones, usar el gemelo digital, la cámara y encender la banda.</p></div>
+
+<h2 id="abrir">Abrir el panel</h2>
+<p>El panel corre en la computadora que tiene el brazo conectado por USB. No vive en internet: esta página solo te lleva a él.</p>
+<div class="botones" style="justify-content:flex-start">
+  <a class="btn" href="http://localhost:5000" target="_blank" rel="noopener"><i class="bi bi-sliders"></i> Abrir panel en esta computadora</a>
+</div>
+<p class="leyenda">Funciona solo si el servidor ya está encendido en esta misma computadora (paso 2).</p>
+
+<h3>Desde el celular</h3>
+<p>Escribe la dirección IP de la computadora (la muestra la ventana negra del servidor al arrancar). El celular y la computadora deben estar en la misma red WiFi.</p>
+<form id="formIp" class="botones" style="justify-content:flex-start;gap:8px" onsubmit="return false">
+  <input id="ipPc" type="text" inputmode="decimal" placeholder="Ej. 192.168.1.20" aria-label="IP de la computadora" style="flex:1 1 180px;padding:10px 12px;border-radius:10px;border:1px solid var(--borde);background:var(--panel);color:inherit">
+  <button class="btn" id="btnIp" type="button"><i class="bi bi-phone"></i> Abrir desde el celular</button>
+</form>
+
+<h2 id="pasos">Cómo encenderlo</h2>
+<ol class="pasos">
+<li><strong>Conecta el ESP32 por USB</strong>Con la fuente de los servos encendida. Cierra el Monitor Serie de Arduino o PlatformIO, porque ocupa el puerto.</li>
+<li><strong>Arranca el servidor</strong>Haz doble clic en <code>arrancar_servidor.bat</code> (carpeta <code>servidor_web</code>). Deja abierta la ventana negra.</li>
+<li><strong>Abre el panel</strong>Con el botón de arriba, o escribe <code>http://localhost:5000</code> en el navegador.</li>
+<li><strong>Elige tu puerto COM</strong>Arriba a la derecha del panel está el selector <em>Puerto</em>. Escoge el COM de tu ESP32 y el panel se reconecta solo.</li>
+</ol>
+
+<h2 id="com">Elegir el puerto COM</h2>
+<p>Cada computadora le asigna un número distinto al ESP32 (COM3, COM5…). El selector <strong>Puerto</strong> del panel te deja escogerlo sin tocar código:</p>
+<ul>
+<li><strong>Automático</strong> busca solo un adaptador USB típico de ESP32 (CP210x, CH340…). Es lo normal.</li>
+<li><strong>COMx</strong> fija el puerto que tú elijas. Úsalo si hay varios dispositivos USB conectados.</li>
+<li><strong>⟳</strong> vuelve a leer la lista, por si conectaste el ESP32 después de abrir el panel.</li>
+</ul>
+<div class="nota"><strong>¿Y si no tengo el brazo conectado?</strong>El panel igualmente abre en modo <em>Simulación</em>: puedes mover el gemelo digital y probar la interfaz. En cuanto conectas el ESP32 y eliges su puerto, pasa a modo real.</div>
+<div class="aviso"><strong>Seguridad</strong>El panel no tiene contraseña. Úsalo solo en tu red local y no lo publiques en internet.</div>
+
+<p><a href="codigo.html">Ver los códigos</a> · <a href="conexiones.html">Ver las conexiones</a> · <a href="banda.html">Ver la banda</a></p>
+</div></main>
+<div id="pie"></div>
+<script src="assets/js/main.js"></script>
+<script>
+document.getElementById('btnIp').addEventListener('click',function(){
+  var v=(document.getElementById('ipPc').value||'').trim();
+  if(!/^[0-9]{1,3}(\.[0-9]{1,3}){3}$/.test(v)){alert('Escribe una IP como 192.168.1.20');return;}
+  window.open('http://'+v+':5000','_blank','noopener');
+});
+</script>
+</body></html>

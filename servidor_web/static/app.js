@@ -828,3 +828,35 @@ async function iniciar() {
 }
 
 iniciar();
+
+
+/* ====================== Selector de puerto COM ===================== */
+async function cargarPuertos() {
+  const sel = $('#selCom');
+  try {
+    const d = await api('/api/puertos');
+    const actual = d.pref || 'AUTO';
+    sel.innerHTML = '';
+    const auto = document.createElement('option');
+    auto.value = 'AUTO'; auto.textContent = 'Automático';
+    sel.appendChild(auto);
+    d.puertos.forEach((p) => {
+      const o = document.createElement('option');
+      o.value = p.device; o.textContent = `${p.device} · ${p.descripcion}`;
+      sel.appendChild(o);
+    });
+    if (actual !== 'AUTO' && !d.puertos.some((p) => p.device === actual)) {
+      const o = document.createElement('option');
+      o.value = actual; o.textContent = `${actual} (no detectado)`;
+      sel.appendChild(o);
+    }
+    sel.value = actual;
+  } catch (err) { /* sin servidor: se reintenta al refrescar */ }
+}
+$('#selCom').addEventListener('change', async (ev) => {
+  await accion('/api/puerto', { puerto: ev.target.value });
+  cargarPuertos();
+});
+$('#btnComRefrescar').addEventListener('click', cargarPuertos);
+$('#selCom').addEventListener('focus', cargarPuertos);
+cargarPuertos();

@@ -14,6 +14,11 @@
   <div class="estado">
     <span id="chipServidor" class="chip"><i></i><b>Servidor…</b></span>
     <span id="chipEsp32" class="chip"><i></i><b>ESP32…</b></span>
+    <span class="selector-com" title="Puerto USB donde está conectado el ESP32">
+      <label for="selCom">Puerto</label>
+      <select id="selCom" aria-label="Puerto COM del ESP32"><option value="AUTO">Automático</option></select>
+      <button id="btnComRefrescar" type="button" title="Buscar puertos de nuevo" aria-label="Actualizar lista de puertos">⟳</button>
+    </span>
     <span id="chipCamara" class="chip"><i></i><b>Cámara…</b></span>
     <span id="chipLatencia" class="chip"><i></i><b>— ms</b></span>
     <button id="btnStop" class="stop" title="Detener todo (tecla Esc)">■ STOP</button>

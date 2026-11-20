@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1117"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link rel="stylesheet" href="assets/css/style.css">
+<title>Origen y modificaciones · Brazo Robótico The Genesis</title>
+<meta name="description" content="En qué proyectos abiertos se basan el brazo y la banda, y qué modificamos para llegar a nuestro resultado.">
+</head><body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div id="cabecera"></div>
+<main id="contenido"><div class="wrap">
+<div class="cab-pagina"><span class="etiqueta">Créditos</span><h1>Origen y modificaciones</h1><p>Este proyecto parte de dos diseños 3D de otros autores. Aquí reconocemos su trabajo y explicamos qué cambiamos.</p></div>
+
+<h2 id="brazo">El brazo</h2>
+<div class="tabla"><table class="dos"><tbody>
+<tr><td>Diseño base</td><td><a href="https://makerworld.com/models/1134925" target="_blank" rel="noopener">«Robotic Arm with Servo &amp; Arduino»</a> (MakerWorld): brazo de 6 ejes imprimible, con servos y Arduino.</td></tr>
+<tr><td>Autor</td><td>Emre Kalem</td></tr>
+<tr><td>Piezas originales</td><td>20 archivos STL (base, antebrazo, muñeca, engranes, pinza).</td></tr>
+</tbody></table></div>
+<h3>Lo que cambiamos</h3>
+<ul>
+<li><strong>Electrónica:</strong> Arduino reemplazado por un ESP32 con un controlador PCA9685 de 16 canales para los 7 servos.</li>
+<li><strong>Firmware:</strong> movimiento con perfil trapezoidal, límites y posición HOME guardados en memoria, parada de emergencia y telemetría.</li>
+<li><strong>Software:</strong> panel web (Flask) con gemelo digital 3D, secuencias de poses y visión por cámara con detección de color.</li>
+<li><strong>Integración:</strong> el brazo trabaja junto con una banda transportadora controlada desde el mismo panel.</li>
+</ul>
+
+<h2 id="banda">La banda transportadora</h2>
+<div class="tabla"><table class="dos"><tbody>
+<tr><td>Diseño base</td><td>«Mini Conveyor and Belt – Motorized» (MakerWorld), publicado el 18 de febrero de 2025. Sus archivos se llaman «Motorized Mini Conveyor Assembly» y «Modular Conveyor Belt Assembly – Easier Snap».</td></tr>
+<tr><td>Autor</td><td>petti</td></tr>
+<tr><td>Piezas originales</td><td>41 archivos STL (paredes laterales, cadena, rodillo, piñón, muñones, patas, caja de motor).</td></tr>
+</tbody></table></div>
+<h3>Lo que cambiamos</h3>
+<ul>
+<li><strong>Tamaño:</strong> cadena modular rediseñada a 111 mm de ancho, con 68 eslabones.</li>
+<li><strong>Eslabón nivelado:</strong> corregimos un eslabón con un escalón que lo dejaba mal nivelado.</li>
+<li><strong>Rodamientos:</strong> cuatro 627ZZ en los muñones del rodillo y del piñón.</li>
+<li><strong>Motor:</strong> motor N20 de 6 V a 100 rpm, con soporte de motor alargado 6 mm, controlado desde el ESP32 mediante un puente H TC1508A.</li>
+<li><strong>Tensor:</strong> tensor lateral para ajustar la cadena.</li>
+<li><strong>Resultado:</strong> banda armada, probada y funcionando. Ver <a href="banda.html">la página de la banda</a>.</li>
+</ul>
+
+<div class="nota"><strong>Archivos originales</strong>No redistribuimos los STL de los autores originales. Si quieres construir tu propia versión, descárgalos de la fuente y revisa su licencia. Los archivos que sí compartimos son los de nuestras modificaciones.</div>
+<div class="nota"><strong>Agradecimiento</strong>Gracias a <strong>Emre Kalem</strong> y a <strong>petti</strong>. Sus diseños fueron la base y la inspiración de este proyecto, y esta página existe para reconocer su trabajo.</div>
+</div></main>
+<div id="pie"></div>
+<script src="assets/js/main.js"></script>
+</body></html>

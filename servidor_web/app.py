@@ -122,6 +122,7 @@ class Enlace:
         self.disp = None                 # serial.Serial o ESP32Simulado
         self.modo = "buscando"           # "esp32" | "simulacion"
         self.puerto = None
+        self.puerto_pref = PUERTO_SERIAL   # "AUTO" o "COMx" (se cambia desde la página)
         self.firmware = "?"
         self.pendientes = set()          # articulaciones con J por mandar
         self.cola = []                   # otros comandos por mandar
@@ -271,7 +272,7 @@ class Enlace:
                 "lim": [list(l) for l in self.lim], "home": list(self.home),
                 "vel": self.vel_pct, "calib": self.calib, "ver": self.version,
                 "modo": self.modo, "esp32": self.modo == "esp32",
-                "puerto": self.puerto, "firmware": self.firmware, "aviso": self.aviso,
+                "puerto": self.puerto, "puerto_pref": self.puerto_pref, "firmware": self.firmware, "aviso": self.aviso,
                 "banda": {"disponible": self.banda_disponible, "pct": self.banda_pct,
                           "revision": self._banda_revision,
                           "objetivo": self.banda_obj, "activa": self.banda_pct != 0},
@@ -284,9 +285,10 @@ class Enlace:
 
     # ------------------------ Conexión ------------------------------
     def _buscar_puerto(self):
-        if PUERTO_SERIAL.upper() != "AUTO":
-            return PUERTO_SERIAL if any(p.device == PUERTO_SERIAL
-                                        for p in serial.tools.list_ports.comports()) else None
+        pref = self.puerto_pref
+        if pref.upper() != "AUTO":
+            return pref if any(p.device == pref
+                               for p in serial.tools.list_ports.comports()) else None
         for p in serial.tools.list_ports.comports():
             texto = f"{p.description} {p.manufacturer or ''}".upper()
             if any(chip in texto for chip in CHIPS_USB):
@@ -351,6 +353,26 @@ class Enlace:
                 self.avisar("El ESP32 no responde. Revisa el cable o cierra el Monitor Serie.", "error")
         else:
             print("[ESP32] No encontrado -> modo SIMULACIÓN (se sigue buscando cada 2 s)")
+
+    def listar_puertos(self):
+        lista = []
+        for p in serial.tools.list_ports.comports():
+            lista.append({"device": p.device, "descripcion": p.description or p.device})
+        return sorted(lista, key=lambda x: x["device"])
+
+    def elegir_puerto(self, puerto):
+        """Fija el COM ('COM5') o 'AUTO' y fuerza una reconexión."""
+        puerto = (puerto or "AUTO").strip()
+        if puerto.upper() != "AUTO" and not any(p["device"] == puerto for p in self.listar_puertos()):
+            raise ValueError(f"El puerto {puerto} no existe en esta computadora.")
+        with self.lock:
+            self.puerto_pref = "AUTO" if puerto.upper() == "AUTO" else puerto
+            self._parar_banda()
+            self.cola = []
+            self.pendientes.clear()
+        self._cerrar()          # el hilo vuelve a conectar con la nueva preferencia
+        self.avisar("Buscando el ESP32 en " + ("cualquier puerto (AUTO)" if self.puerto_pref == "AUTO"
+                                               else self.puerto_pref) + "…", "info")
 
     def _cerrar(self):
         try:
@@ -719,6 +741,21 @@ def api_config():
     return jsonify({"articulaciones": ARTICULACIONES,
                     "gemelo": gemelo_validado(leer_json(ARCHIVO_GEMELO, {})),
                     **estado_completo()})
+
+
+@app.get("/api/puertos")
+def api_puertos():
+    return jsonify({"puertos": enlace.listar_puertos(), "pref": enlace.puerto_pref,
+                    "actual": enlace.puerto, "modo": enlace.modo})
+
+
+@app.post("/api/puerto")
+def api_puerto():
+    try:
+        enlace.elegir_puerto(cuerpo().get("puerto", "AUTO"))
+    except ValueError as e:
+        return error(str(e))
+    return ok()
 
 
 @app.get("/api/estado")
