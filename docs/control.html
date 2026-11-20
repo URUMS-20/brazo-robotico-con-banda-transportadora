@@ -57,20 +57,26 @@
   }
   function pinta(on){est.textContent=on?'Servidor encendido. Ya puedes abrir el panel.':'Servidor apagado en esta computadora.';}
   vivo().then(pinta);
+  var ultimo=false;
+  vivo().then(function(on){ultimo=on;});
+  function esperar(){
+    intentos=0; clearInterval(timer);
+    timer=setInterval(function(){
+      intentos++;
+      vivo().then(function(ok){
+        if(ok){clearInterval(timer);pinta(true);window.open(URL_PANEL,'_blank','noopener');}
+        else if(intentos===8){est.textContent='Sigue apagado. Si no apareció ningún permiso del navegador, falta instalar el botón: haz doble clic en instalar_boton_encendido.bat (carpeta servidor_web) y vuelve a intentar.';}
+        else if(intentos>=45){clearInterval(timer);est.textContent='No se encendió. Instala el botón (nota de arriba) o usa arrancar_servidor.bat.';}
+      });
+    },1000);
+  }
   btn.addEventListener('click',function(){
-    vivo().then(function(on){
-      if(on){pinta(true);window.open(URL_PANEL,'_blank','noopener');return;}
-      est.textContent='Encendiendo… acepta el permiso del navegador si aparece.';
-      window.location.href='genesis-brazo://iniciar';
-      intentos=0; clearInterval(timer);
-      timer=setInterval(function(){
-        intentos++;
-        vivo().then(function(ok){
-          if(ok){clearInterval(timer);pinta(true);window.open(URL_PANEL,'_blank','noopener');}
-          else if(intentos>=45){clearInterval(timer);est.textContent='No se encendió. Instala el botón (nota de arriba) o usa arrancar_servidor.bat.';}
-        });
-      },1000);
-    });
+    if(ultimo){window.open(URL_PANEL,'_blank','noopener');return;}
+    /* se lanza en el mismo clic: los navegadores solo permiten abrir apps desde un gesto del usuario */
+    est.textContent='Encendiendo… acepta el permiso del navegador si aparece.';
+    window.location.href='genesis-brazo://iniciar';
+    esperar();
+    vivo().then(function(on){ultimo=on; if(on){pinta(true);}});
   });
 })();
 document.getElementById('btnIp').addEventListener('click',function(){

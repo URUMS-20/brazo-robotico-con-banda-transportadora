@@ -20,7 +20,7 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--acento);outline-off
 
 /* Cabecera */
 .cab{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--borde)}
-.cab .wrap{max-width:1240px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px}
+.cab .wrap{max-width:1500px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px}
 .marca{white-space:nowrap;display:flex;align-items:center;gap:10px;font-weight:700;color:var(--texto);text-decoration:none}
 .marca i{color:var(--acento);font-size:1.4rem}
 .menu-btn{display:none;background:none;border:1px solid var(--borde);color:var(--texto);border-radius:10px;padding:8px 12px;font-size:1.2rem;cursor:pointer}
@@ -28,7 +28,7 @@ nav ul{list-style:none;display:flex;gap:4px;margin:0;padding:0}
 nav a{display:flex;align-items:center;gap:7px;white-space:nowrap;padding:8px 10px;border-radius:10px;color:var(--suave);text-decoration:none;font-size:.95rem}
 nav a:hover{background:var(--panel2);color:var(--texto)}
 nav a[aria-current="page"]{background:var(--panel2);color:var(--acento);font-weight:600}
-@media (max-width:1000px){
+@media (max-width:1360px){
   .menu-btn{display:block}
   nav{display:none;position:absolute;left:0;right:0;top:100%;background:var(--bg);border-bottom:1px solid var(--borde);padding:8px 18px 14px}
   nav.abierto{display:block}
@@ -104,5 +104,5 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-bet
 
 /* Tablas de 2 columnas: sin ancho mínimo para que quepan en el celular */
 .tabla table.dos{min-width:0}
-@media (max-width:1180px){nav a i{display:none}}
-@media (max-width:1000px){nav a i{display:inline}}
+@media (min-width:1361px){nav a i{display:none}}
+@media (max-width:1360px){nav a i{display:inline}}
