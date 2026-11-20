@@ -9,11 +9,13 @@
 <div class="cab-pagina"><span class="etiqueta">Control</span><h1>Panel de control del brazo y la banda</h1><p>Un solo panel web para mover las articulaciones, usar el gemelo digital, la cámara y encender la banda.</p></div>
 
 <h2 id="abrir">Abrir el panel</h2>
-<p>El panel corre en la computadora que tiene el brazo conectado por USB. No vive en internet: esta página solo te lleva a él.</p>
+<p>El panel corre en la computadora que tiene el brazo conectado por USB. No vive en internet: esta página lo enciende y te lleva a él.</p>
 <div class="botones" style="justify-content:flex-start">
-  <a class="btn" href="http://localhost:5000" target="_blank" rel="noopener"><i class="bi bi-sliders"></i> Abrir panel en esta computadora</a>
+  <button class="btn primario" id="btnEncender" type="button"><i class="bi bi-power"></i> Encender servidor y abrir panel</button>
+  <a class="btn" id="btnPanel" href="http://localhost:5000" target="_blank" rel="noopener"><i class="bi bi-sliders"></i> Abrir panel</a>
 </div>
-<p class="leyenda">Funciona solo si el servidor ya está encendido en esta misma computadora (paso 2).</p>
+<p class="leyenda" id="estadoServidor" role="status">Comprobando si el servidor está encendido…</p>
+<div class="nota"><strong>Primera vez en esta computadora</strong>Una página web no puede encender programas por sí sola. Para que el botón funcione, haz <em>una sola vez</em> doble clic en <code>instalar_boton_encendido.bat</code> (carpeta <code>servidor_web</code>). Después, el botón enciende el servidor y el navegador te preguntará si permites abrir la aplicación: acepta. Si no quieres instalarlo, enciende el servidor con <code>arrancar_servidor.bat</code> y usa «Abrir panel».</div>
 
 <h3>Desde el celular</h3>
 <p>Escribe la dirección IP de la computadora (la muestra la ventana negra del servidor al arrancar). El celular y la computadora deben estar en la misma red WiFi.</p>
@@ -25,8 +27,8 @@
 <h2 id="pasos">Cómo encenderlo</h2>
 <ol class="pasos">
 <li><strong>Conecta el ESP32 por USB</strong>Con la fuente de los servos encendida. Cierra el Monitor Serie de Arduino o PlatformIO, porque ocupa el puerto.</li>
-<li><strong>Arranca el servidor</strong>Haz doble clic en <code>arrancar_servidor.bat</code> (carpeta <code>servidor_web</code>). Deja abierta la ventana negra.</li>
-<li><strong>Abre el panel</strong>Con el botón de arriba, o escribe <code>http://localhost:5000</code> en el navegador.</li>
+<li><strong>Arranca el servidor</strong>Con el botón <em>Encender servidor</em> de esta página (tras instalarlo una vez) o con doble clic en <code>arrancar_servidor.bat</code> (carpeta <code>servidor_web</code>).</li>
+<li><strong>Abre el panel</strong>Con el botón <em>Abrir panel</em>, o escribe <code>http://localhost:5000</code> en el navegador.</li>
 <li><strong>Elige tu puerto COM</strong>Arriba a la derecha del panel está el selector <em>Puerto</em>. Escoge el COM de tu ESP32 y el panel se reconecta solo.</li>
 </ol>
 
@@ -45,6 +47,32 @@
 <div id="pie"></div>
 <script src="assets/js/main.js"></script>
 <script>
+(function(){
+  var URL_PANEL='http://localhost:5000', est=document.getElementById('estadoServidor'),
+      btn=document.getElementById('btnEncender'), intentos=0, timer=null;
+  function vivo(){
+    var c=new AbortController(), t=setTimeout(function(){c.abort();},1500);
+    return fetch(URL_PANEL+'/api/estado',{mode:'no-cors',cache:'no-store',signal:c.signal})
+      .then(function(){clearTimeout(t);return true;},function(){clearTimeout(t);return false;});
+  }
+  function pinta(on){est.textContent=on?'Servidor encendido. Ya puedes abrir el panel.':'Servidor apagado en esta computadora.';}
+  vivo().then(pinta);
+  btn.addEventListener('click',function(){
+    vivo().then(function(on){
+      if(on){pinta(true);window.open(URL_PANEL,'_blank','noopener');return;}
+      est.textContent='Encendiendo… acepta el permiso del navegador si aparece.';
+      window.location.href='genesis-brazo://iniciar';
+      intentos=0; clearInterval(timer);
+      timer=setInterval(function(){
+        intentos++;
+        vivo().then(function(ok){
+          if(ok){clearInterval(timer);pinta(true);window.open(URL_PANEL,'_blank','noopener');}
+          else if(intentos>=45){clearInterval(timer);est.textContent='No se encendió. Instala el botón (nota de arriba) o usa arrancar_servidor.bat.';}
+        });
+      },1000);
+    });
+  });
+})();
 document.getElementById('btnIp').addEventListener('click',function(){
   var v=(document.getElementById('ipPc').value||'').trim();
   if(!/^[0-9]{1,3}(\.[0-9]{1,3}){3}$/.test(v)){alert('Escribe una IP como 192.168.1.20');return;}
