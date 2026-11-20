@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1117"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link rel="stylesheet" href="assets/css/style.css">
+<title>Diagrama de conexiones · Brazo Robótico The Genesis</title>
+<meta name="description" content="Diagrama y tabla de conexiones del brazo robótico: ESP32, PCA9685, servos, fuente y banda con TC1508A.">
+</head><body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div id="cabecera"></div>
+<main id="contenido"><div class="wrap">
+<div class="cab-pagina"><span class="etiqueta">Electrónica</span><h1>Diagrama de conexiones</h1><p>Qué va conectado a qué, y cómo alimentarlo sin dañar nada.</p></div>
+
+<h2 id="diagrama">1. Vista general</h2>
+<figure class="figura">
+<svg viewBox="0 0 760 400" role="img" aria-labelledby="t1 d1" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,sans-serif" font-size="13">
+<title id="t1">Diagrama de bloques de conexiones</title>
+<desc id="d1">La laptop se conecta por USB al ESP32. El ESP32 se conecta por I2C al PCA9685, que maneja 7 servos. El ESP32 maneja el puente H TC1508A con los pines 25 y 26. Una fuente alimenta los servos y otra el motor de la banda.</desc>
+<defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#38bdf8"/></marker></defs>
+<g fill="#1c2330" stroke="#38bdf8" stroke-width="1.5">
+<rect x="20" y="150" width="120" height="70" rx="10"/>
+<rect x="210" y="150" width="140" height="70" rx="10"/>
+<rect x="430" y="60" width="150" height="70" rx="10"/>
+<rect x="430" y="250" width="150" height="70" rx="10"/>
+<rect x="640" y="40" width="100" height="110" rx="10"/>
+<rect x="640" y="250" width="100" height="70" rx="10"/>
+</g>
+<g fill="#e6edf3" text-anchor="middle">
+<text x="80" y="182" font-weight="700">Laptop</text><text x="80" y="200" fill="#9fb0c3">servidor Flask</text>
+<text x="280" y="182" font-weight="700">ESP32</text><text x="280" y="200" fill="#9fb0c3">DevKit</text>
+<text x="505" y="92" font-weight="700">PCA9685</text><text x="505" y="110" fill="#9fb0c3">I2C · 0x40</text>
+<text x="505" y="282" font-weight="700">TC1508A</text><text x="505" y="300" fill="#9fb0c3">puente H</text>
+<text x="690" y="85" font-weight="700">7 servos</text><text x="690" y="103" fill="#9fb0c3">canales 0–6</text>
+<text x="690" y="282" font-weight="700">Motor DC</text><text x="690" y="300" fill="#9fb0c3">banda</text>
+</g>
+<g stroke="#38bdf8" stroke-width="2" fill="none" marker-end="url(#f)">
+<path d="M140 185H208" marker-start="url(#f)"/>
+<path d="M350 170L428 100"/><path d="M350 200L428 280"/>
+<path d="M580 95H638"/><path d="M580 285H638"/>
+</g>
+<g fill="#9fb0c3" font-size="12" text-anchor="middle">
+<text x="174" y="176">USB</text>
+<text x="372" y="125" transform="rotate(-38 372 125)">SDA 21 · SCL 22</text>
+<text x="372" y="258" transform="rotate(38 372 258)">GPIO 25 · 26</text>
+</g>
+<g fill="#fbbf24" font-size="12" text-anchor="middle">
+<rect x="430" y="345" width="150" height="34" rx="8" fill="none" stroke="#fbbf24"/><text x="505" y="367">Fuente motor 3–7 V (máx 7.2)</text>
+<rect x="590" y="3" width="150" height="26" rx="8" fill="none" stroke="#fbbf24"/><text x="665" y="21">Fuente servos 6.0 V</text>
+</g>
+<g stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4 3" fill="none"><path d="M505 345V322"/><path d="M690 29V38"/></g>
+</svg>
+<figcaption>Las tierras (GND) de ESP32, PCA9685, TC1508A y ambas fuentes deben estar unidas.</figcaption>
+</figure>
+
+<h2 id="tabla">2. Tabla de conexiones</h2>
+<h3>ESP32 ↔ PCA9685 ↔ fuente de servos</h3>
+<div class="tabla"><table>
+<thead><tr><th>Desde</th><th>Hacia</th><th>Nota</th></tr></thead>
+<tbody>
+<tr><td>ESP32 3V3</td><td>PCA9685 VCC</td><td>Lógica del PCA9685</td></tr>
+<tr><td>ESP32 GND</td><td>PCA9685 GND</td><td>Tierra común</td></tr>
+<tr><td>ESP32 GPIO21</td><td>PCA9685 SDA</td><td>I2C datos</td></tr>
+<tr><td>ESP32 GPIO22</td><td>PCA9685 SCL</td><td>I2C reloj</td></tr>
+<tr><td>Fuente (+) 5.5 a 6.0 V</td><td>PCA9685 bornera V+</td><td>Potencia de servos</td></tr>
+<tr><td>Fuente (−)</td><td>PCA9685 bornera GND</td><td>Potencia de servos</td></tr>
+<tr><td>ESP32 USB</td><td>Laptop</td><td>Datos y alimentación del ESP32</td></tr>
+<tr><td>Servo canal 0 a 6</td><td>Pines PWM del PCA9685</td><td>Naranja = señal, rojo = V+, café = GND</td></tr>
+</tbody></table></div>
+
+<h3>Canales de los servos</h3>
+<div class="tabla"><table>
+<thead><tr><th>Canal</th><th>Servo</th><th>Articulación</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>M1 · DS3225</td><td>Base</td></tr>
+<tr><td>1</td><td>M2 · DS3225</td><td>Hombro A</td></tr>
+<tr><td>2</td><td>M3 · DS3225 (espejo)</td><td>Hombro B</td></tr>
+<tr><td>3</td><td>M4 · DS3225</td><td>Codo</td></tr>
+<tr><td>4</td><td>M5 · MG90S</td><td>Muñeca</td></tr>
+<tr><td>5</td><td>M6 · MG90S</td><td>Giro de pinza</td></tr>
+<tr><td>6</td><td>M7 · MG90S</td><td>Pinza</td></tr>
+</tbody></table></div>
+
+<h3>Banda transportadora (TC1508A, primer puente)</h3>
+<div class="tabla"><table>
+<thead><tr><th>Desde</th><th>Hacia</th></tr></thead>
+<tbody>
+<tr><td>ESP32 GPIO25</td><td>INA / IN1</td></tr>
+<tr><td>ESP32 GPIO26</td><td>INB / IN2</td></tr>
+<tr><td>ESP32 GND</td><td>GND del módulo y negativo de la fuente del motor</td></tr>
+<tr><td>Positivo de la fuente del motor</td><td>VCC / VDD del módulo</td></tr>
+<tr><td>OUTA / OUT1 y OUTB / OUT2</td><td>Los dos cables del motor DC</td></tr>
+</tbody></table></div>
+<p class="leyenda">Los nombres de las terminales cambian entre módulos: identifica las etiquetas de tu placa. Si no usas el segundo puente, sus entradas pueden ir a GND y sus salidas quedan libres.</p>
+
+<h2 id="seguridad">3. Reglas de seguridad eléctrica</h2>
+<div class="alerta"><strong>Léelas antes de conectar</strong>
+<ul>
+<li>Nunca alimentes servos ni el motor desde el ESP32 (ni 3V3, ni 5V/VIN, ni su USB).</li>
+<li>Une todas las tierras: ESP32, PCA9685, TC1508A y fuentes.</li>
+<li>Conecta con las fuentes apagadas.</li>
+<li><strong>No conectes 12 V al TC1508A:</strong> su alimentación va de 2.4 a 7.2 V, con 7.2 V como máximo absoluto.</li>
+<li>Servos: máximo 6.0 V para todo el brazo.</li>
+</ul></div>
+<ul>
+  <li>Recomendado: capacitor de 1000 µF / 16 V en la bornera V+ / GND del PCA9685.</li>
+  <li>Recomendado: resistencias de 10 kΩ de INA a GND y de INB a GND, para evitar movimiento de la banda mientras el ESP32 arranca.</li>
+  <li>El TC1508A admite hasta 1.8 A continuos por puente; un motor que consuma más necesita otro controlador.</li>
+</ul>
+</div></main>
+<div id="pie"></div>
+<script src="assets/js/main.js"></script>
+</body></html>

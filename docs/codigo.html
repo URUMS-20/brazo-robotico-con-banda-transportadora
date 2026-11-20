@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1117"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link rel="stylesheet" href="assets/css/style.css">
+<title>Repositorio de códigos · Brazo Robótico The Genesis</title>
+<meta name="description" content="Estructura del código del brazo robótico, protocolo serie, instalación y cómo subir el firmware.">
+</head><body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div id="cabecera"></div>
+<main id="contenido"><div class="wrap">
+<div class="cab-pagina"><span class="etiqueta">Software</span><h1>Repositorio de códigos</h1><p>Qué hay en cada carpeta y cómo ponerlo a funcionar.</p></div>
+<div class="botones" style="justify-content:flex-start;margin:18px 0">
+  <a class="btn primario" data-repo=""><i class="bi bi-github"></i> Abrir el repositorio</a>
+  <a class="btn" data-repo="firmware_esp32/src/main.cpp"><i class="bi bi-cpu"></i> Firmware</a>
+  <a class="btn" data-repo="servidor_web/app.py"><i class="bi bi-filetype-py"></i> Servidor</a>
+</div>
+
+<h2 id="estructura">1. Estructura</h2>
+<div class="tabla"><table>
+<thead><tr><th>Ruta</th><th>Qué contiene</th></tr></thead>
+<tbody>
+<tr><td><a data-repo="firmware_esp32/"><code>firmware_esp32/</code></a></td><td>Proyecto PlatformIO. <code>src/main.cpp</code> tiene todo el firmware: protocolo, límites, HOME, memoria, perfil de movimiento y banda.</td></tr>
+<tr><td><a data-repo="servidor_web/"><code>servidor_web/</code></a></td><td>Servidor Flask y página web.</td></tr>
+<tr><td><code>servidor_web/app.py</code></td><td>Enlace USB con el ESP32, API, poses, secuencias y banda.</td></tr>
+<tr><td><code>servidor_web/vision.py</code></td><td>Cámara, detección por color, medida en cm y video MJPEG.</td></tr>
+<tr><td><code>servidor_web/simulador.py</code></td><td>ESP32 simulado para probar sin el brazo.</td></tr>
+<tr><td><code>servidor_web/static/</code></td><td>Interfaz: <code>app.js</code>, <code>banda.js</code>, <code>gemelo.js</code>, estilos y el modelo 3D.</td></tr>
+<tr><td><code>servidor_web/poses.json</code></td><td>Poses y secuencias guardadas.</td></tr>
+<tr><td><code>servidor_web/gemelo.json</code></td><td>Calibración del gemelo digital.</td></tr>
+<tr><td><code>readme.txt</code> · <code>requerimientos.txt</code></td><td>Documentación completa y lista de lo que hay que instalar.</td></tr>
+<tr><td><code>docs/</code></td><td>Este sitio web.</td></tr>
+</tbody></table></div>
+
+<h2 id="instalar">2. Poner a funcionar el servidor</h2>
+<ol class="pasos">
+  <li><strong>Instala Python 3.12</strong>En Windows, marca "Add python.exe to PATH" en el instalador.</li>
+  <li><strong>Instala el driver USB del ESP32</strong>CP210x (Silicon Labs) o CH340 (WCH), según el chip junto al conector.</li>
+  <li><strong>Conecta el ESP32 y la cámara</strong>Con un cable USB de datos.</li>
+  <li><strong>Arranca</strong>Doble clic en <code>servidor_web/arrancar_servidor.bat</code>, o desde la terminal:
+<div class="bloque"><pre><code>cd servidor_web
+python -m pip install -r requirements.txt
+python app.py</code></pre></div></li>
+  <li><strong>Abre la página</strong><code>http://localhost:5000</code>. Desde el celular, usa la IP que muestra la terminal, en la misma red WiFi.</li>
+</ol>
+<div class="nota"><strong>Sin brazo</strong>Si no hay ESP32 conectado, el servidor usa un ESP32 simulado: la página funciona igual, para pruebas.</div>
+
+<h2 id="firmware">3. Subir el firmware</h2>
+<ol class="pasos">
+  <li><strong>Cierra el servidor</strong>El puerto USB debe estar libre.</li>
+  <li><strong>Abre <code>firmware_esp32</code> en VS Code con PlatformIO</strong>Descarga la plataforma y la librería la primera vez (necesita internet).</li>
+  <li><strong>Build y Upload</strong>Si se queda en "Connecting...", mantén presionado el botón BOOT del ESP32.</li>
+  <li><strong>Verifica</strong>En el monitor serie a 115200 debe aparecer <code>LISTO v2</code>.</li>
+</ol>
+<p>Una subida normal conserva los límites y el HOME guardados en la memoria del ESP32.</p>
+
+<h2 id="protocolo">4. Protocolo serie (115200 baudios)</h2>
+<p>Una orden por línea. Puedes probarlo a mano en el monitor serie, con el servidor cerrado.</p>
+<div class="tabla"><table>
+<thead><tr><th>Laptop → ESP32</th><th>Acción</th></tr></thead>
+<tbody>
+<tr><td><code>J&lt;i&gt; &lt;g&gt;</code></td><td>Mover la articulación i (0 a 5) a g grados</td></tr>
+<tr><td><code>H</code> · <code>HG</code></td><td>Ir a HOME · guardar posición actual como HOME</td></tr>
+<tr><td><code>S</code></td><td>STOP: congela sin soltar los servos y apaga la banda</td></tr>
+<tr><td><code>V &lt;p&gt;</code></td><td>Velocidad general en % (10 a 100)</td></tr>
+<tr><td><code>X &lt;0|1&gt;</code></td><td>Modo calibración (0° a 180°, velocidad ≤ 25 %)</td></tr>
+<tr><td><code>L&lt;i&gt; &lt;min&gt; &lt;max&gt;</code></td><td>Nuevos límites de la articulación i</td></tr>
+<tr><td><code>R</code></td><td>Restaurar límites y HOME de fábrica</td></tr>
+<tr><td><code>B &lt;-100..100&gt;</code> · <code>B?</code></td><td>Potencia de la banda con signo · consultar</td></tr>
+<tr><td><code>?</code> · <code>C</code></td><td>Pedir objetivos y posición · pedir configuración</td></tr>
+</tbody></table></div>
+<div class="tabla"><table>
+<thead><tr><th>ESP32 → Laptop</th><th>Significado</th></tr></thead>
+<tbody>
+<tr><td><code>LISTO v2 cfg=...</code></td><td>Arranque (<code>memoria</code> o <code>fabrica</code>)</td></tr>
+<tr><td><code>P o0 … o5</code></td><td>Objetivos de cada articulación</td></tr>
+<tr><td><code>A a0 … a5 m</code></td><td>Posición actual (m = 1 si se mueve), 20 veces por segundo</td></tr>
+<tr><td><code>C n0 x0 h0 …</code></td><td>Mínimo, máximo y HOME de cada articulación</td></tr>
+<tr><td><code>B p</code> · <code>B NA</code></td><td>Estado de la banda · banda no disponible</td></tr>
+<tr><td><code>E texto</code></td><td>Error</td></tr>
+</tbody></table></div>
+<div class="bloque"><pre><code>J0 120     # base a 120°
+H          # volver a HOME
+B 40       # banda adelante al 40 %
+S          # STOP</code></pre></div>
+
+<h2 id="tecnologias">5. Tecnologías</h2>
+<div class="rejilla">
+  <div class="tarjeta"><h3>Firmware</h3><p>C++ · Arduino-ESP32 · PlatformIO · Adafruit PWM Servo Driver</p></div>
+  <div class="tarjeta"><h3>Servidor</h3><p>Python 3.12 · Flask · pyserial · OpenCV</p></div>
+  <div class="tarjeta"><h3>Interfaz</h3><p>HTML · CSS · JavaScript · Three.js (local)</p></div>
+</div>
+<p class="leyenda">Licencias de terceros: Three.js (MIT), Adafruit PWM Servo Driver (BSD), Flask, pyserial y OpenCV (libres). Si más adelante se usa Ultralytics YOLO (AGPL-3.0), hay que revisar su licencia antes de comercializar.</p>
+</div></main>
+<div id="pie"></div>
+<script src="assets/js/main.js"></script>
+</body></html>

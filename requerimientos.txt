@@ -1,0 +1,153 @@
+﻿==============================================================================
+  REQUERIMIENTOS - BRAZO ROBÓTICO (The Genesis)
+  Qué instalar en una laptop nueva para USAR y para PROGRAMAR el proyecto
+------------------------------------------------------------------------------
+  Actualizado: noviembre 2026          Más detalles: readme.txt (sección 5)
+==============================================================================
+
+RESUMEN RÁPIDO
+
+  Lo que quieres hacer                    Qué necesitas instalar
+  --------------------------------------  ------------------------------------
+  Usar el brazo con el .zip portátil      Solo el driver USB del ESP32
+  (preparar_mudanza.bat, Forma A)         (si Windows no lo reconoce solo).
+  Usar el brazo sin el portátil (Forma B) Python 3.12 + driver USB.
+                                          Las librerías las instala el .bat.
+  Modificar el código en VS Code          VS Code + extensión Python.
+  Modificar y subir el firmware al ESP32  VS Code + extensión PlatformIO IDE.
+  IA con la GPU (RTX 5060), a futuro      Driver NVIDIA + Python 3.12 normal
+                                          + PyTorch con CUDA + Ultralytics.
+
+
+==============================================================================
+A. PARA USAR EL BRAZO
+==============================================================================
+
+A.1 Sistema
+  - Windows 10 u 11 de 64 bits.
+  - Navegador Chrome o Edge actualizado (el gemelo 3D usa WebGL).
+  - Puerto USB para el ESP32 y otro para la cámara Brio 100.
+
+A.2 Driver USB del ESP32 (en las dos formas)
+  Mira el chip junto al conector USB de la placa:
+  - CP2102 / CP210x  ->  "CP210x USB to UART Bridge VCP Drivers"
+                         (Silicon Labs).
+  - CH340 / CH9102   ->  "CH340/CH341 driver" (WCH).
+  Prueba: con el ESP32 conectado, en Administrador de dispositivos >
+  Puertos (COM y LPT) debe aparecer un COM (por ejemplo COM3).
+
+A.3 Forma A: Python portátil (recomendada)
+  No se instala Python. Se usa la carpeta  python\  que crea
+  preparar_mudanza.bat en la laptop vieja. Contiene:
+  - Python 3.12.10 embebido (oficial de python.org, 64 bits).
+  - Flask, pyserial, OpenCV y numpy, más sus dependencias.
+  - El runtime de Visual C++ que necesita OpenCV.
+  Versiones exactas: python\paquetes_instalados.txt
+  Solo si al arrancar aparece "DLL load failed" con OpenCV: instala
+  "Microsoft Visual C++ Redistributable" x64 (Microsoft, gratis).
+
+A.4 Forma B: Python instalado
+  1. Python 3.12 de 64 bits desde python.org.
+     En el instalador marca  "Add python.exe to PATH".
+     Prueba en una terminal:     python --version
+  2. Librerías (el archivo arrancar_servidor.bat las instala solo; esto
+     es por si lo quieres hacer a mano):
+       cd servidor_web
+       python -m pip install -r requirements.txt
+     Contenido de servidor_web\requirements.txt:
+       flask>=3.0           servidor web
+       pyserial>=3.5        comunicación USB con el ESP32
+       opencv-python>=4.8   cámara y visión artificial (instala numpy)
+
+
+==============================================================================
+B. PARA PROGRAMAR EN VS CODE
+==============================================================================
+
+B.1 Programas
+  - Visual Studio Code (code.visualstudio.com).
+  - Git: NO es necesario para este proyecto.
+
+B.2 Extensiones de VS Code (pestaña Extensiones, Ctrl + Shift + X)
+  Nombre                Identificador                  Para qué
+  --------------------  -----------------------------  -----------------------
+  Python                ms-python.python               Editar y ejecutar el
+                                                       servidor (trae Pylance
+                                                       y el depurador).
+  PlatformIO IDE        platformio.platformio-ide      Compilar y subir el
+                                                       firmware al ESP32.
+  C/C++                 ms-vscode.cpptools             La instala PlatformIO
+                                                       solo.
+
+B.3 Lo que PlatformIO descarga solo (primera compilación, con internet,
+    puede tardar de 5 a 15 minutos)
+  - Plataforma  espressif32  (compilador, esptool para subir el código).
+  - Framework Arduino para ESP32 (core 2.0.17, ESP-IDF 4.4.7).
+  - Librería  adafruit/Adafruit PWM Servo Driver Library @ ^3.0.0
+    (y su dependencia Adafruit BusIO).
+  Todo está declarado en  firmware_esp32\platformio.ini, así que no hay
+  que instalar librerías a mano.
+
+B.4 Cómo abrir cada parte
+  Firmware:  File > Open Folder > firmware_esp32
+             (PlatformIO lo detecta por platformio.ini).
+             Compilar: palomita.  Subir: flecha.  Monitor: enchufe
+             (115200 baudios). Cierra el servidor antes de subir.
+  Servidor:  File > Open Folder > brazo_robotico
+             Intérprete:
+               - Forma A: Ctrl + Shift + P > "Python: Select
+                 Interpreter" > "Enter interpreter path..." >
+                 python\python.exe (dentro del proyecto).
+               - Forma B: el Python 3.12 instalado
+                 (Ctrl + Shift + P > "Python: Select Interpreter").
+             Ejecutar desde la terminal de VS Code:
+               Forma A:   cd servidor_web
+                          ..\python\python.exe app.py
+               Forma B:   cd servidor_web
+                          python app.py
+             (O simplemente doble clic en arrancar_servidor.bat.)
+
+
+==============================================================================
+C. RED
+==============================================================================
+  - Para usar el celular: la laptop y el celular en la MISMA red WiFi.
+  - Firewall de Windows: permitir Python en "Redes privadas" (lo pregunta
+    la primera vez que arranca el servidor).
+  - Puerto web: 5000 (se cambia en app.py, PUERTO_WEB).
+
+
+==============================================================================
+D. IA CON LA GPU (A FUTURO, LAPTOP CON RTX 5060)
+==============================================================================
+  Esto todavía no es parte del proyecto; es lo que hará falta para entrenar
+  y usar YOLO26s-obb con la tarjeta gráfica.
+
+  1. Driver de NVIDIA actualizado (NVIDIA App).
+  2. Python 3.12 NORMAL (no el portátil; el portátil no trae pip).
+  3. Un ambiente aparte para la IA (no mezcla librerías):
+       python -m venv .venv_ia
+       .venv_ia\Scripts\activate
+  4. PyTorch con soporte para las RTX serie 50 (CUDA 12.8 o más nuevo;
+     en pytorch.org elige la opción CUDA más reciente):
+       pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+  5. Ultralytics:
+       pip install ultralytics
+  6. Comprobar que ve la GPU (debe decir True y el nombre de la tarjeta):
+       python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
+  Espacio en disco: unos 5 GB entre PyTorch, CUDA y modelos.
+
+
+==============================================================================
+E. HARDWARE DEL PROYECTO (resumen; detalle en readme.txt, sección 4)
+==============================================================================
+  - ESP32 DevKit + driver PCA9685 (I2C 0x40, SDA GPIO21, SCL GPIO22).
+  - 4 servos DS3225 (base, hombro x2, codo) y 3 MG90S (muñeca, giro de
+    pinza, pinza).
+  - Fuente regulable para los servos: 6.0 V recomendado, 5 A o más.
+  - Cámara Logitech Brio 100.
+  - Cable USB de DATOS para el ESP32.
+
+==============================================================================
+  Fin del archivo
+==============================================================================

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0e1116">
+<title>Brazo Robótico (The Genesis)</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body>
+
+<header>
+  <h1>Brazo Robótico (The Genesis)</h1>
+  <div class="estado">
+    <span id="chipServidor" class="chip"><i></i><b>Servidor…</b></span>
+    <span id="chipEsp32" class="chip"><i></i><b>ESP32…</b></span>
+    <span id="chipCamara" class="chip"><i></i><b>Cámara…</b></span>
+    <span id="chipLatencia" class="chip"><i></i><b>— ms</b></span>
+    <button id="btnStop" class="stop" title="Detener todo (tecla Esc)">■ STOP</button>
+  </div>
+  <div id="bandaCalib" class="banda" hidden>MODO CALIBRACIÓN · barras abiertas de 0° a 180° · velocidad máxima 25 %</div>
+</header>
+
+<main>
+  <!-- =============== Control de articulaciones (compacto) =============== -->
+  <section class="zona-control" aria-label="Control de articulaciones">
+    <div id="tablero" class="tablero"></div>
+    <div class="barra-acciones">
+      <button id="btnHome" class="primario">HOME · posición inicial</button>
+      <div class="segmentado" role="group" aria-label="Velocidad general">
+        <span>Velocidad</span>
+        <button data-vel="25">25 %</button>
+        <button data-vel="50">50 %</button>
+        <button data-vel="100">100 %</button>
+      </div>
+    </div>
+    <section class="panel motor-banda" aria-label="Control de banda transportadora">
+      <div class="panel-top">
+        <div><h2>Banda transportadora</h2><span class="sub">Motor DC · velocidad independiente del brazo</span></div>
+        <span id="estadoBanda" class="chip" role="status">Conectando…</span>
+      </div>
+      <label class="velocidad-banda" for="velBanda">Velocidad <output id="valorBanda" for="velBanda">30 %</output></label>
+      <input type="range" id="velBanda" min="0" max="100" step="1" value="30" disabled aria-label="Velocidad de la banda en porcentaje">
+      <div class="fila-form controles-banda">
+        <select id="sentidoBanda" aria-label="Sentido de la banda" disabled>
+          <option value="1">Adelante</option><option value="-1">Reversa</option>
+        </select>
+        <button id="btnBandaIniciar" class="sec" disabled>Encender</button>
+        <button id="btnBandaDetener" class="sec peligro" disabled>Detener banda</button>
+      </div>
+      <p id="notaBanda" class="nota">La banda inicia apagada. STOP también detiene el motor.</p>
+    </section>
+  </section>
+
+  <!-- =============== Gemelo digital 3D =============== -->
+  <section class="panel gemelo" aria-label="Gemelo digital">
+    <div class="panel-top">
+      <div>
+        <h2>Gemelo digital</h2>
+        <span class="sub">Posición solicitada al ESP32 (sin sensores de posición)</span>
+      </div>
+      <div class="acciones">
+        <button id="btnVistaBrazo" class="sec chico">Ver brazo</button>
+        <button id="btnVistaPinza" class="sec chico">Ver pinza</button>
+        <button id="btnCalibrarGemelo" class="sec chico">⚙ Calibrar</button>
+      </div>
+    </div>
+    <div id="lienzoGemelo" class="lienzo">
+      <div id="coordPunta" class="coord"></div>
+      <div id="avisoGemelo" class="aviso-gemelo" hidden></div>
+      <div id="cargaGemelo" class="carga">Cargando modelo 3D…</div>
+      <div class="ayuda3d">Arrastra para girar · rueda o pellizco: zoom · clic derecho: mover</div>
+    </div>
+
+    <form id="formGemelo" class="form-gemelo" hidden>
+      <h3>Calibración del gemelo</h3>
+      <ol class="instrucciones">
+        <li>Activa <b>Mostrar postura del modelo</b> para ver cómo está el brazo en el modelo 3D.</li>
+        <li>Con las barras, deja el brazo real <b>igual</b> que el modelo: brazo principal inclinado hacia atrás, antebrazo horizontal hacia el frente, muñeca recta y pinza <b>totalmente abierta</b>.</li>
+        <li>Toca <b>Usar posición actual como cero</b>.</li>
+        <li>Desactiva la postura del modelo y elige el <b>sentido</b> de cada articulación: mueve su barra; si el gemelo va al revés que el brazo real, cambia a "Invertido".</li>
+        <li>Toca <b>Guardar</b>.</li>
+      </ol>
+      <div class="fila-form">
+        <label class="check"><input type="checkbox" id="chkReposo"> Mostrar postura del modelo</label>
+        <button type="button" id="btnCapturarCero" class="sec">Usar posición actual como cero</button>
+      </div>
+      <div class="tabla-envoltura">
+        <table class="tabla-cal">
+          <thead><tr><th>Articulación</th><th>Canal</th><th>Cero (°)</th><th>Sentido</th></tr></thead>
+          <tbody id="tablaCalib"></tbody>
+        </table>
+      </div>
+      <div class="fila-form">
+        <button type="submit" class="sec">Guardar</button>
+        <button type="button" id="btnBorrarCalib" class="sec peligro">Borrar calibración</button>
+        <button type="button" id="btnGemeloCerrar" class="sec">Cerrar</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- =============== Cámara y visión artificial =============== -->
+  <section class="panel camara" aria-label="Cámara y visión artificial">
+    <div class="panel-top">
+      <div>
+        <h2>Cámara · visión artificial</h2>
+        <span id="estadoCam" class="sub"></span>
+      </div>
+    </div>
+    <div class="fila-form">
+      <select id="selCamara" aria-label="Cámara"></select>
+      <button id="btnBuscarCam" class="sec chico">Buscar cámaras</button>
+      <button id="btnCamara" class="sec chico">▶ Encender</button>
+    </div>
+    <details class="telefono-config">
+      <summary>Conectar teléfono por WiFi</summary>
+      <p class="nota">En Android abre IP Webcam e inicia el servidor. Conecta teléfono y laptop a la misma red WiFi.</p>
+      <div class="fila-form">
+        <input id="urlTelefono" type="text" inputmode="url" autocomplete="off" spellcheck="false" aria-label="Dirección de video del teléfono" placeholder="http://192.168.1.50:8080">
+        <button id="btnTelefono" class="sec chico">Conectar teléfono</button>
+      </div>
+      <p class="nota">Copia aquí la dirección que muestra la app. Después podrás elegir <b>Mi teléfono (WiFi)</b> en la lista de cámaras.</p>
+      <p class="nota">Con Iriun: abre su app en el teléfono y en Windows; pulsa Buscar cámaras y selecciona la cámara virtual correspondiente.</p>
+    </details>
+    <div class="video">
+      <img id="video" alt="Video de la cámara con los cubos detectados" hidden>
+      <div id="sinVideo" class="sin-video">Cámara apagada</div>
+    </div>
+    <ul id="listaDetecciones" class="detecciones"></ul>
+    <details class="ajustes-vision">
+      <summary>Ajustes de visión</summary>
+      <div class="campo-vision">
+        <span>Colores que se buscan</span>
+        <div id="coloresVision" class="chips-color"></div>
+      </div>
+      <div class="campo-vision">
+        <span>Exposición</span>
+        <div class="fila-form">
+          <label class="check"><input type="checkbox" id="chkExpAuto"> Automática</label>
+          <input type="range" id="rngExposicion" min="-11" max="-1" step="1" aria-label="Exposición manual">
+          <output id="valExposicion"></output>
+        </div>
+      </div>
+      <div class="campo-vision">
+        <span>Tamaño real (px por cm): <b id="valPxCm">sin calibrar</b></span>
+        <div class="fila-form">
+          <label class="check">Cubo de <input type="number" id="ladoCalib" min="1" max="30" step="0.1" value="7"> cm</label>
+          <button id="btnCalibrarCam" class="sec chico">Calibrar con el cubo a la vista</button>
+        </div>
+        <p class="nota">Deja un solo cubo de medida conocida debajo de la cámara, viendo desde arriba, y toca calibrar.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- =============== Poses y secuencias =============== -->
+  <div class="biblioteca">
+    <section class="panel" aria-label="Poses guardadas">
+      <div class="panel-top"><h2>Poses</h2></div>
+      <form id="formPose" class="fila-form">
+        <input type="text" id="nombrePose" placeholder="Nombre (opcional)" maxlength="40">
+        <button type="submit" class="sec">＋ Guardar posición actual</button>
+      </form>
+      <ul id="listaPoses" class="lista"></ul>
+    </section>
+
+    <section class="panel" aria-label="Secuencias">
+      <div class="panel-top"><h2>Secuencias</h2><span id="estadoRep" class="estado-rep"></span></div>
+      <div class="fila-form">
+        <select id="selSecuencia" aria-label="Secuencia"></select>
+        <button id="btnNuevaSec" class="sec">Nueva</button>
+        <button id="btnBorrarSec" class="sec peligro">Borrar</button>
+      </div>
+      <input type="text" id="nombreSec" placeholder="Nombre de la secuencia" maxlength="40">
+      <ol id="listaPasos" class="pasos"></ol>
+      <div class="fila-form">
+        <button id="btnAgregarPaso" class="sec">＋ Añadir paso</button>
+        <button id="btnGuardarSec" class="sec">Guardar</button>
+      </div>
+      <div class="fila-form">
+        <button id="btnReproducir" class="primario">▶ Reproducir</button>
+        <label class="check"><input type="checkbox" id="chkRepetir"> Repetir</label>
+      </div>
+    </section>
+  </div>
+
+  <!-- =============== Calibración de límites =============== -->
+  <details class="panel calib" id="panelCalib">
+    <summary>Calibración de límites y HOME</summary>
+    <ol class="instrucciones">
+      <li>Toca <b>Entrar a modo calibración</b>: las barras se abren de 0° a 180° y la velocidad baja a 25 %. La zona roja de cada barra es lo que hoy está fuera de su límite.</li>
+      <li>Mueve una articulación con <b>−1 / +1</b> hasta que toque algo o el servo empiece a zumbar. Regresa de 3 a 5 grados.</li>
+      <li>Toca <b>Fijar mín</b> o <b>Fijar máx</b> en esa tarjeta. Se guarda en la memoria del ESP32.</li>
+      <li>Para el HOME: lleva el brazo a su posición de descanso y toca <b>Guardar posición actual como HOME</b>.</li>
+    </ol>
+    <div class="fila-form">
+      <button id="btnCalib" class="sec">Entrar a modo calibración</button>
+      <button id="btnGuardarHome" class="sec">Guardar posición actual como HOME</button>
+      <button id="btnFabrica" class="sec peligro">Restaurar valores de fábrica</button>
+    </div>
+    <p class="nota">Antes de apagar, presiona HOME: al prender, el ESP32 manda el brazo a HOME de golpe porque no sabe dónde quedó.</p>
+  </details>
+</main>
+
+<div id="avisos" class="avisos" aria-live="polite"></div>
+<script type="module" src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

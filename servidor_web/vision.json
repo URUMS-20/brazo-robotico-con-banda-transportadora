@@ -1,0 +1,118 @@
+{
+  "url_telefono": "http://192.168.1.39:8080/video",
+  "camara": 2,
+  "activa": true,
+  "ancho": 1280,
+  "alto": 720,
+  "exposicion_auto": true,
+  "exposicion": -6,
+  "px_por_cm": 59.19,
+  "tamanos_cm": [
+    5,
+    7
+  ],
+  "tolerancia": 0.2,
+  "area_min_px": 600,
+  "colores": {
+    "rojo": {
+      "activo": true,
+      "bgr": [
+        50,
+        50,
+        235
+      ],
+      "rangos": [
+        [
+          [
+            0,
+            120,
+            70
+          ],
+          [
+            10,
+            255,
+            255
+          ]
+        ],
+        [
+          [
+            170,
+            120,
+            70
+          ],
+          [
+            179,
+            255,
+            255
+          ]
+        ]
+      ]
+    },
+    "verde": {
+      "activo": false,
+      "bgr": [
+        70,
+        200,
+        70
+      ],
+      "rangos": [
+        [
+          [
+            40,
+            70,
+            60
+          ],
+          [
+            85,
+            255,
+            255
+          ]
+        ]
+      ]
+    },
+    "azul": {
+      "activo": false,
+      "bgr": [
+        235,
+        140,
+        40
+      ],
+      "rangos": [
+        [
+          [
+            95,
+            120,
+            60
+          ],
+          [
+            130,
+            255,
+            255
+          ]
+        ]
+      ]
+    },
+    "amarillo": {
+      "activo": false,
+      "bgr": [
+        40,
+        220,
+        240
+      ],
+      "rangos": [
+        [
+          [
+            20,
+            120,
+            90
+          ],
+          [
+            35,
+            255,
+            255
+          ]
+        ]
+      ]
+    }
+  }
+}

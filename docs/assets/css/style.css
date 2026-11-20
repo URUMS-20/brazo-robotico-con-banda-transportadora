@@ -1,0 +1,103 @@
+/* ===== Documentación técnica · Brazo robótico The Genesis ===== */
+:root{
+  --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --borde:#2d3748;
+  --texto:#e6edf3; --suave:#9fb0c3; --acento:#38bdf8; --acento2:#22d3a6;
+  --aviso:#fbbf24; --peligro:#f87171; --radio:14px; --max:1080px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme:light){
+  :root{--bg:#f6f8fa;--panel:#fff;--panel2:#eef2f7;--borde:#d0d7de;--texto:#1f2328;--suave:#57606a;--acento:#0369a1;--acento2:#0f766e}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--texto);font:16px/1.65 var(--sans)}
+img,svg,model-viewer{max-width:100%}
+a{color:var(--acento)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--acento);outline-offset:2px}
+.skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;background:var(--acento);color:#000;padding:8px 12px;border-radius:8px;z-index:99}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 18px}
+
+/* Cabecera */
+.cab{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--borde)}
+.cab .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:58px}
+.marca{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--texto);text-decoration:none}
+.marca i{color:var(--acento);font-size:1.4rem}
+.menu-btn{display:none;background:none;border:1px solid var(--borde);color:var(--texto);border-radius:10px;padding:8px 12px;font-size:1.2rem;cursor:pointer}
+nav ul{list-style:none;display:flex;gap:4px;margin:0;padding:0}
+nav a{display:flex;align-items:center;gap:7px;padding:8px 12px;border-radius:10px;color:var(--suave);text-decoration:none;font-size:.95rem}
+nav a:hover{background:var(--panel2);color:var(--texto)}
+nav a[aria-current="page"]{background:var(--panel2);color:var(--acento);font-weight:600}
+@media (max-width:860px){
+  .menu-btn{display:block}
+  nav{display:none;position:absolute;left:0;right:0;top:100%;background:var(--bg);border-bottom:1px solid var(--borde);padding:8px 18px 14px}
+  nav.abierto{display:block}
+  nav ul{flex-direction:column}
+  nav a{padding:13px 12px;font-size:1.05rem}
+}
+
+/* Portada */
+.hero{padding:54px 0 34px;text-align:center;background:radial-gradient(900px 300px at 50% 0,color-mix(in srgb,var(--acento) 18%,transparent),transparent)}
+.hero h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1.15;margin:.2em 0}
+.hero p.lead{color:var(--suave);font-size:1.1rem;max-width:680px;margin:0 auto 22px}
+.etiqueta{display:inline-block;font:600 .78rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--acento2);border:1px solid var(--acento2);padding:3px 10px;border-radius:99px}
+.botones{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:12px;font-weight:600;text-decoration:none;border:1px solid var(--borde);color:var(--texto);background:var(--panel)}
+.btn:hover{border-color:var(--acento)}
+.btn.primario{background:var(--acento);border-color:var(--acento);color:#04121c}
+
+/* Contenido */
+main{padding:10px 0 60px}
+h1,h2,h3{line-height:1.25}
+h2{margin:2.2em 0 .6em;font-size:1.6rem;padding-top:.4em;scroll-margin-top:76px}
+h3{margin:1.6em 0 .4em;font-size:1.2rem;scroll-margin-top:76px}
+.cab-pagina{padding:34px 0 6px}
+.cab-pagina h1{margin:.2em 0;font-size:clamp(1.8rem,5vw,2.5rem)}
+.cab-pagina p{color:var(--suave);margin:0}
+.rejilla{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.tarjeta{background:var(--panel);border:1px solid var(--borde);border-radius:var(--radio);padding:18px}
+.tarjeta h3{margin:.1em 0 .3em;display:flex;align-items:center;gap:9px}
+.tarjeta h3 i{color:var(--acento)}
+.tarjeta p{margin:.3em 0;color:var(--suave)}
+a.tarjeta{display:block;text-decoration:none;color:inherit;transition:transform .15s,border-color .15s}
+a.tarjeta:hover{transform:translateY(-2px);border-color:var(--acento)}
+.dato{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.dato div{flex:1 1 130px;background:var(--panel);border:1px solid var(--borde);border-radius:var(--radio);padding:12px 14px;text-align:center}
+.dato b{display:block;font-size:1.6rem;color:var(--acento)}
+.dato span{color:var(--suave);font-size:.85rem}
+
+/* Avisos */
+.aviso,.nota,.alerta,.pendiente{border-left:4px solid;border-radius:10px;padding:12px 16px;margin:16px 0;background:var(--panel)}
+.nota{border-color:var(--acento)}.aviso{border-color:var(--aviso)}.alerta{border-color:var(--peligro)}.pendiente{border-color:var(--suave);border-style:dashed;border-left-style:solid}
+.aviso strong,.alerta strong,.nota strong,.pendiente strong{display:block;margin-bottom:2px}
+
+/* Tablas y código */
+.tabla{overflow-x:auto;margin:14px 0;border:1px solid var(--borde);border-radius:var(--radio)}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.93rem}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--borde);vertical-align:top}
+th{background:var(--panel2);font-weight:600}
+tr:last-child td{border-bottom:0}
+code{font-family:var(--mono);font-size:.9em;background:var(--panel2);padding:2px 6px;border-radius:6px}
+.bloque{position:relative;margin:14px 0}
+pre{margin:0;background:#010409;color:#d1e4f5;border:1px solid var(--borde);border-radius:var(--radio);padding:16px;overflow-x:auto;font:.88rem/1.55 var(--mono)}
+pre code{background:none;padding:0;color:inherit}
+.copiar{position:absolute;top:8px;right:8px;background:var(--panel2);color:var(--texto);border:1px solid var(--borde);border-radius:8px;padding:4px 10px;font-size:.8rem;cursor:pointer}
+.copiar:hover{border-color:var(--acento)}
+
+/* Pasos */
+ol.pasos{list-style:none;counter-reset:p;padding:0;margin:14px 0}
+ol.pasos>li{counter-increment:p;position:relative;background:var(--panel);border:1px solid var(--borde);border-radius:var(--radio);padding:14px 16px 14px 62px;margin-bottom:10px}
+ol.pasos>li::before{content:counter(p);position:absolute;left:14px;top:12px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--acento);color:#04121c;font-weight:700}
+ol.pasos>li strong{display:block}
+
+/* Diagramas y visor */
+.figura{background:var(--panel);border:1px solid var(--borde);border-radius:var(--radio);padding:12px;margin:16px 0;overflow-x:auto}
+.figura svg{display:block;margin:0 auto;min-width:640px}
+.figura figcaption{color:var(--suave);font-size:.88rem;text-align:center;margin-top:8px}
+model-viewer{width:100%;height:min(70vh,520px);background:radial-gradient(circle,var(--panel2),var(--bg));border-radius:var(--radio);border:1px solid var(--borde);--poster-color:transparent}
+.leyenda{color:var(--suave);font-size:.88rem}
+
+/* Pie */
+footer{border-top:1px solid var(--borde);padding:26px 0;color:var(--suave);font-size:.9rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between}
+@media print{.cab,.copiar,.menu-btn{display:none}body{background:#fff;color:#000}}

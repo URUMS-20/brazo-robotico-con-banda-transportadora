@@ -1,0 +1,14 @@
+# Python portátil y temporales (pesan mucho y se regeneran)
+python/
+__pycache__/
+*.pyc
+# Compilación de PlatformIO
+firmware_esp32/.pio/
+firmware_esp32/.vscode/
+# Empaquetados y respaldos
+*.zip
+preparar_mudanza.log
+# Datos locales de calibración del servidor (descomenta si NO quieres subirlos)
+# servidor_web/vision.json
+.DS_Store
+Thumbs.db

@@ -1,0 +1,568 @@
+{
+  "schema_version": 1,
+  "model": "assets/brazo_articulado.glb",
+  "units": "meters",
+  "up_axis": "Y",
+  "cad_to_gltf": "root rotates -90 degrees about X: (x,y,z)->(x,z,-y)",
+  "angles": "Relative to the supplied assembled CAD pose. Not absolute servo commands. Axis vectors below are in CAD-oriented node-parent coordinates, before the root conversion.",
+  "logical_dofs": 6,
+  "part_count": 48,
+  "triangles": 339592,
+  "joints": [
+    {
+      "state_key": "base_deg",
+      "node": "joint_base",
+      "label": "Base",
+      "type": "revolute",
+      "input_unit": "degree",
+      "axis_in_node_parent": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "pivot_cad_m": [
+        0.045004890000000006,
+        0.0,
+        0.07
+      ],
+      "rest_value": 0,
+      "hardware_channel": null,
+      "hardware_zero_deg": null,
+      "hardware_direction": null,
+      "hardware_limits_deg": null
+    },
+    {
+      "state_key": "shoulder_deg",
+      "node": "joint_shoulder",
+      "label": "Hombro",
+      "type": "revolute",
+      "input_unit": "degree",
+      "axis_in_node_parent": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "pivot_cad_m": [
+        0.07500489,
+        0.0,
+        0.11
+      ],
+      "rest_value": 0,
+      "hardware_channel": null,
+      "hardware_zero_deg": null,
+      "hardware_direction": null,
+      "hardware_limits_deg": null
+    },
+    {
+      "state_key": "elbow_deg",
+      "node": "joint_elbow",
+      "label": "Codo",
+      "type": "revolute",
+      "input_unit": "degree",
+      "axis_in_node_parent": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "pivot_cad_m": [
+        -0.14280675984602845,
+        0.0,
+        0.38815062818213436
+      ],
+      "rest_value": 0,
+      "hardware_channel": null,
+      "hardware_zero_deg": null,
+      "hardware_direction": null,
+      "hardware_limits_deg": null
+    },
+    {
+      "state_key": "wrist_pitch_deg",
+      "node": "joint_wrist_pitch",
+      "label": "Flexión de muñeca",
+      "type": "revolute",
+      "input_unit": "degree",
+      "axis_in_node_parent": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "pivot_cad_m": [
+        0.06888542601275487,
+        0.0,
+        0.3881506429171329
+      ],
+      "rest_value": 0,
+      "hardware_channel": null,
+      "hardware_zero_deg": null,
+      "hardware_direction": null,
+      "hardware_limits_deg": null
+    },
+    {
+      "state_key": "wrist_roll_deg",
+      "node": "joint_wrist_roll",
+      "label": "Giro de muñeca",
+      "type": "revolute",
+      "input_unit": "degree",
+      "axis_in_node_parent": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "pivot_cad_m": [
+        0.09638542601275486,
+        0.0,
+        0.3881506429171329
+      ],
+      "rest_value": 0,
+      "hardware_channel": null,
+      "hardware_zero_deg": null,
+      "hardware_direction": null,
+      "hardware_limits_deg": null
+    }
+  ],
+  "servos": [
+    {
+      "key": "servo_base",
+      "model": "DS3225",
+      "case_node": "part_servo_base_case",
+      "output_node": "part_servo_base_rotor",
+      "case_parent": "cad_frame",
+      "output_parent": "base_servo_gear",
+      "hardware_channel": null
+    },
+    {
+      "key": "hombro_derecho",
+      "model": "DS3225",
+      "case_node": "part_hombro_derecho_case",
+      "output_node": "part_hombro_derecho_rotor",
+      "case_parent": "joint_base",
+      "output_parent": "joint_shoulder",
+      "hardware_channel": null
+    },
+    {
+      "key": "hombro_izquierdo",
+      "model": "DS3225",
+      "case_node": "part_hombro_izquierdo_case",
+      "output_node": "part_hombro_izquierdo_rotor",
+      "case_parent": "joint_base",
+      "output_parent": "joint_shoulder",
+      "hardware_channel": null
+    },
+    {
+      "key": "codo",
+      "model": "DS3225",
+      "case_node": "part_codo_case",
+      "output_node": "part_codo_rotor",
+      "case_parent": "joint_elbow",
+      "output_parent": "joint_shoulder",
+      "hardware_channel": null
+    },
+    {
+      "key": "muneca_flexion",
+      "model": "MG90S",
+      "case_node": "part_muneca_flexion_case",
+      "output_node": "part_muneca_flexion_rotor",
+      "case_parent": "joint_wrist_pitch",
+      "output_parent": "joint_elbow",
+      "hardware_channel": null
+    },
+    {
+      "key": "muneca_giro",
+      "model": "MG90S",
+      "case_node": "part_muneca_giro_case",
+      "output_node": "part_muneca_giro_rotor",
+      "case_parent": "joint_wrist_roll",
+      "output_parent": "joint_wrist_pitch",
+      "hardware_channel": null
+    },
+    {
+      "key": "pinza",
+      "model": "MG90S",
+      "case_node": "part_pinza_case",
+      "output_node": "part_pinza_rotor",
+      "case_parent": "joint_wrist_roll",
+      "output_parent": "gripper_pinion",
+      "hardware_channel": null
+    }
+  ],
+  "shoulder_elbow_axis_distance_mm": 353.2841445165136,
+  "elbow_wrist_axis_distance_mm": 211.69218585878383,
+  "forearm_source": "urumagod (1).stl",
+  "gripper": {
+    "state_key": "gripper_opening_mm",
+    "unit": "mm",
+    "min": 45,
+    "max": 85,
+    "rest": 85,
+    "pinion_node": "gripper_pinion",
+    "pinion_axis_parent": [
+      0,
+      0,
+      -1
+    ],
+    "pitch_radius_mm": 9,
+    "pinion_closing_rad_formula": "(85 - opening_mm) / (2 * 9)",
+    "jaw_A_node": "gripper_jaw_A",
+    "jaw_B_node": "gripper_jaw_B",
+    "jaw_A_closing_axis_parent": [
+      0,
+      1,
+      0
+    ],
+    "jaw_B_closing_axis_parent": [
+      0,
+      -1,
+      0
+    ],
+    "jaw_travel_each_mm": 20
+  },
+  "base_gear": {
+    "node": "base_servo_gear",
+    "axis_parent": [
+      0,
+      0,
+      1
+    ],
+    "angle_ratio_to_base": -1
+  },
+  "parts": [
+    {
+      "id": "2",
+      "node": "part_2",
+      "label": "01 Carcasa de base",
+      "parent": "cad_frame",
+      "triangles": 12278
+    },
+    {
+      "id": "4",
+      "node": "part_4",
+      "label": "02 Tapa inferior",
+      "parent": "cad_frame",
+      "triangles": 15434
+    },
+    {
+      "id": "6",
+      "node": "part_6",
+      "label": "07 Plataforma giratoria",
+      "parent": "joint_base",
+      "triangles": 9906
+    },
+    {
+      "id": "10",
+      "node": "part_10",
+      "label": "09 Antebrazo URUMAGOD",
+      "parent": "joint_elbow",
+      "triangles": 8124
+    },
+    {
+      "id": "12",
+      "node": "part_12",
+      "label": "12 Muneca adaptada MG90S",
+      "parent": "joint_wrist_pitch",
+      "triangles": 3438
+    },
+    {
+      "id": "18",
+      "node": "part_18",
+      "label": "11 Eje de muneca",
+      "parent": "joint_wrist_pitch",
+      "triangles": 236
+    },
+    {
+      "id": "16",
+      "node": "part_16",
+      "label": "10 Eje del codo",
+      "parent": "joint_shoulder",
+      "triangles": 560
+    },
+    {
+      "id": "14",
+      "node": "part_14",
+      "label": "23 Tapa de conector",
+      "parent": "cad_frame",
+      "triangles": 978
+    },
+    {
+      "id": "8",
+      "node": "part_8",
+      "label": "Brazo principal unido PARTE 1 + PARTE 2",
+      "parent": "joint_shoulder",
+      "triangles": 4054
+    },
+    {
+      "id": "24",
+      "node": "part_24",
+      "label": "13 Soporte de cables",
+      "parent": "joint_elbow",
+      "triangles": 596
+    },
+    {
+      "id": "22",
+      "node": "part_22",
+      "label": "05 Engranaje del eje",
+      "parent": "joint_base",
+      "triangles": 2260
+    },
+    {
+      "id": "26",
+      "node": "part_26",
+      "label": "06 Engranaje del servo base",
+      "parent": "base_servo_gear",
+      "triangles": 2692
+    },
+    {
+      "id": "20",
+      "node": "part_20",
+      "label": "04 Eje vertical",
+      "parent": "joint_base",
+      "triangles": 554
+    },
+    {
+      "id": "45",
+      "node": "part_45",
+      "label": "03 Retenedor inferior",
+      "parent": "joint_base",
+      "triangles": 3304
+    },
+    {
+      "id": "g2",
+      "node": "part_g2",
+      "label": "Soporte giro MG90S adaptado",
+      "parent": "joint_wrist_roll",
+      "triangles": 2552
+    },
+    {
+      "id": "g6",
+      "node": "part_g6",
+      "label": "03_Cremallera_mordaza_A",
+      "parent": "gripper_jaw_A",
+      "triangles": 634
+    },
+    {
+      "id": "g4",
+      "node": "part_g4",
+      "label": "Base cremalleras adaptada MG90S",
+      "parent": "joint_wrist_roll",
+      "triangles": 4642
+    },
+    {
+      "id": "g8",
+      "node": "part_g8",
+      "label": "04_Cremallera_mordaza_B",
+      "parent": "gripper_jaw_B",
+      "triangles": 650
+    },
+    {
+      "id": "g20",
+      "node": "part_g20",
+      "label": "08_Tapa_guia_3",
+      "parent": "joint_wrist_roll",
+      "triangles": 756
+    },
+    {
+      "id": "g12",
+      "node": "part_g12",
+      "label": "06_Almohadilla_A_GOMA",
+      "parent": "gripper_jaw_A",
+      "triangles": 12
+    },
+    {
+      "id": "g18",
+      "node": "part_g18",
+      "label": "08_Tapa_guia_2",
+      "parent": "joint_wrist_roll",
+      "triangles": 756
+    },
+    {
+      "id": "g22",
+      "node": "part_g22",
+      "label": "08_Tapa_guia_4",
+      "parent": "joint_wrist_roll",
+      "triangles": 756
+    },
+    {
+      "id": "g16",
+      "node": "part_g16",
+      "label": "08_Tapa_guia_1",
+      "parent": "joint_wrist_roll",
+      "triangles": 1396
+    },
+    {
+      "id": "g24",
+      "node": "part_g24",
+      "label": "Separador MG90S pinza 3.7 mm g24",
+      "parent": "joint_wrist_roll",
+      "triangles": 710
+    },
+    {
+      "id": "g26",
+      "node": "part_g26",
+      "label": "Separador MG90S pinza 3.7 mm g26",
+      "parent": "joint_wrist_roll",
+      "triangles": 710
+    },
+    {
+      "id": "g10",
+      "node": "part_g10",
+      "label": "05_Pinon_involuta_18T_m1",
+      "parent": "gripper_pinion",
+      "triangles": 16254
+    },
+    {
+      "id": "g14",
+      "node": "part_g14",
+      "label": "07_Almohadilla_B_GOMA",
+      "parent": "gripper_jaw_B",
+      "triangles": 12
+    },
+    {
+      "id": "servo_base_case",
+      "node": "part_servo_base_case",
+      "label": "DS3225 servo_base carcasa",
+      "parent": "cad_frame",
+      "triangles": 18250
+    },
+    {
+      "id": "servo_base_rotor",
+      "node": "part_servo_base_rotor",
+      "label": "DS3225 servo_base eje y acople",
+      "parent": "base_servo_gear",
+      "triangles": 21870
+    },
+    {
+      "id": "hombro_derecho_case",
+      "node": "part_hombro_derecho_case",
+      "label": "DS3225 hombro_derecho carcasa",
+      "parent": "joint_base",
+      "triangles": 22172
+    },
+    {
+      "id": "hombro_derecho_rotor",
+      "node": "part_hombro_derecho_rotor",
+      "label": "DS3225 hombro_derecho eje y acople",
+      "parent": "joint_shoulder",
+      "triangles": 21870
+    },
+    {
+      "id": "hombro_izquierdo_case",
+      "node": "part_hombro_izquierdo_case",
+      "label": "DS3225 hombro_izquierdo carcasa",
+      "parent": "joint_base",
+      "triangles": 22172
+    },
+    {
+      "id": "hombro_izquierdo_rotor",
+      "node": "part_hombro_izquierdo_rotor",
+      "label": "DS3225 hombro_izquierdo eje y acople",
+      "parent": "joint_shoulder",
+      "triangles": 21870
+    },
+    {
+      "id": "codo_case",
+      "node": "part_codo_case",
+      "label": "DS3225 codo carcasa",
+      "parent": "joint_elbow",
+      "triangles": 22154
+    },
+    {
+      "id": "codo_rotor",
+      "node": "part_codo_rotor",
+      "label": "DS3225 codo eje y acople",
+      "parent": "joint_shoulder",
+      "triangles": 21870
+    },
+    {
+      "id": "muneca_flexion_case",
+      "node": "part_muneca_flexion_case",
+      "label": "MG90S muneca_flexion carcasa",
+      "parent": "joint_wrist_pitch",
+      "triangles": 8834
+    },
+    {
+      "id": "muneca_flexion_rotor",
+      "node": "part_muneca_flexion_rotor",
+      "label": "MG90S muneca_flexion eje y acople",
+      "parent": "joint_elbow",
+      "triangles": 13960
+    },
+    {
+      "id": "muneca_giro_case",
+      "node": "part_muneca_giro_case",
+      "label": "MG90S muneca_giro carcasa",
+      "parent": "joint_wrist_roll",
+      "triangles": 8834
+    },
+    {
+      "id": "muneca_giro_rotor",
+      "node": "part_muneca_giro_rotor",
+      "label": "MG90S muneca_giro eje y acople",
+      "parent": "joint_wrist_pitch",
+      "triangles": 13960
+    },
+    {
+      "id": "pinza_case",
+      "node": "part_pinza_case",
+      "label": "MG90S pinza carcasa",
+      "parent": "joint_wrist_roll",
+      "triangles": 8834
+    },
+    {
+      "id": "pinza_rotor",
+      "node": "part_pinza_rotor",
+      "label": "MG90S pinza eje y acople",
+      "parent": "gripper_pinion",
+      "triangles": 12464
+    },
+    {
+      "id": "acople_hombro_derecho",
+      "node": "part_acople_hombro_derecho",
+      "label": "Separador acople 2.5 mm acople_hombro_derecho",
+      "parent": "joint_shoulder",
+      "triangles": 1136
+    },
+    {
+      "id": "acople_hombro_izquierdo",
+      "node": "part_acople_hombro_izquierdo",
+      "label": "Separador acople 2.5 mm acople_hombro_izquierdo",
+      "parent": "joint_shoulder",
+      "triangles": 1136
+    },
+    {
+      "id": "acople_codo",
+      "node": "part_acople_codo",
+      "label": "Separador acople 2.5 mm acople_codo",
+      "parent": "joint_shoulder",
+      "triangles": 1136
+    },
+    {
+      "id": "separador_base_1",
+      "node": "part_separador_base_1",
+      "label": "Separador base DS3225 2.6 mm 1",
+      "parent": "cad_frame",
+      "triangles": 704
+    },
+    {
+      "id": "separador_base_2",
+      "node": "part_separador_base_2",
+      "label": "Separador base DS3225 2.6 mm 2",
+      "parent": "cad_frame",
+      "triangles": 704
+    },
+    {
+      "id": "separador_base_3",
+      "node": "part_separador_base_3",
+      "label": "Separador base DS3225 2.6 mm 3",
+      "parent": "cad_frame",
+      "triangles": 704
+    },
+    {
+      "id": "separador_base_4",
+      "node": "part_separador_base_4",
+      "label": "Separador base DS3225 2.6 mm 4",
+      "parent": "cad_frame",
+      "triangles": 704
+    }
+  ],
+  "hardware_mapping_status": "unconfigured; obtain from the existing interface/firmware, never infer channels or absolute zeros from this CAD file",
+  "validation_scope": "visual kinematics; not hardware actuation or collision certification"
+}

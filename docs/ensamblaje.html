@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1117"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link rel="stylesheet" href="assets/css/style.css">
+<title>Guía de ensamblaje · Brazo Robótico The Genesis</title>
+<meta name="description" content="Componentes, orden de montaje, alimentación y calibración inicial del brazo robótico.">
+</head><body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div id="cabecera"></div>
+<main id="contenido"><div class="wrap">
+<div class="cab-pagina"><span class="etiqueta">Ensamblaje</span><h1>Guía de ensamblaje</h1><p>Componentes, orden de montaje y puesta en marcha.</p></div>
+
+<div class="pendiente"><strong>Sección en construcción</strong>Los pasos mecánicos detallados (tornillería, piezas impresas, fotos) se agregarán con la documentación del equipo. Aquí está lo que ya está definido en el proyecto.</div>
+
+<h2 id="materiales">1. Lista de componentes</h2>
+<div class="tabla"><table>
+<thead><tr><th>Cantidad</th><th>Componente</th><th>Uso</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>ESP32 DevKit (esp32dev)</td><td>Controlador principal, conectado por USB</td></tr>
+<tr><td>1</td><td>Driver PCA9685 de 16 canales (I2C 0x40)</td><td>Genera los pulsos PWM de los servos</td></tr>
+<tr><td>4</td><td>Servo DS3225 (25 kg·cm)</td><td>Base, hombro A, hombro B y codo</td></tr>
+<tr><td>3</td><td>Servo MG90S (2.2 kg·cm)</td><td>Muñeca, giro de pinza y pinza</td></tr>
+<tr><td>1</td><td>Fuente regulable (6.0 V, 5 A o más)</td><td>Alimenta solo los servos</td></tr>
+<tr><td>1</td><td>Capacitor electrolítico 1000 µF / 16 V</td><td>Absorbe picos en la alimentación de servos (recomendado)</td></tr>
+<tr><td>1</td><td>Cámara Logitech Brio 100 (o teléfono con IP Webcam)</td><td>Visión artificial</td></tr>
+<tr><td>1</td><td>Módulo puente H TC1508A + motor DC</td><td>Banda transportadora</td></tr>
+<tr><td>—</td><td>Cable USB de <strong>datos</strong></td><td>ESP32 ↔ laptop</td></tr>
+</tbody></table></div>
+
+<h2 id="orden">2. Orden recomendado</h2>
+<ol class="pasos">
+  <li><strong>Prepara cada servo en 90°</strong>Antes de poner el brazo (horn) de un servo, mándalo a 90° para que el recorrido quede centrado. Esto es obligatorio al reemplazar un servo.</li>
+  <li><strong>Monta la base y el hombro</strong>Los dos servos del hombro (canales 1 y 2) deben quedar acoplados: uno gira en espejo respecto al otro.</li>
+  <li><strong>Monta codo, muñeca y giro de pinza</strong>Respeta los canales de la tabla de <a href="conexiones.html">conexiones</a>.</li>
+  <li><strong>Monta la pinza</strong>Es de cremalleras: su recorrido útil ronda 127° de servo (de 85 a 45 mm). Ajusta sus límites para que no se trabe.</li>
+  <li><strong>Cablea la electrónica</strong>Sigue el <a href="conexiones.html">diagrama de conexiones</a>. Une las tierras y conecta con la fuente apagada.</li>
+  <li><strong>Instala el software</strong>Consulta la sección de <a href="codigo.html">códigos</a> para subir el firmware y arrancar el servidor.</li>
+  <li><strong>Calibra</strong>Límites, HOME, gemelo y cámara (siguiente sección).</li>
+</ol>
+
+<h2 id="calibracion">3. Calibración inicial</h2>
+<h3>Límites de cada articulación</h3>
+<ol class="pasos">
+  <li><strong>Entra a modo calibración</strong>Las barras se abren de 0° a 180° y la velocidad baja a 25 %.</li>
+  <li><strong>Mueve con −1 / +1</strong>Hasta que toque algo o el servo empiece a zumbar. Regresa de 3 a 5 grados.</li>
+  <li><strong>Fija el mínimo o el máximo</strong>Con los botones de esa tarjeta. Se guardan en la memoria del ESP32.</li>
+</ol>
+<h3>HOME</h3>
+<p>Lleva el brazo a su posición de descanso y pulsa "Guardar posición actual como HOME". Antes de apagar, vuelve siempre a HOME: al encender, el ESP32 manda el brazo a HOME de golpe.</p>
+<h3>Gemelo digital y cámara</h3>
+<ul>
+  <li><strong>Gemelo:</strong> deja el brazo igual que el modelo, pulsa "Usar posición actual como cero" y elige el sentido de cada articulación.</li>
+  <li><strong>Cámara:</strong> con la cámara fija y un cubo de medida conocida a la vista, calibra los píxeles por cm. Repite si la mueves.</li>
+</ul>
+
+<h2 id="alimentacion">4. Alimentación</h2>
+<div class="alerta"><strong>Importante</strong>DS3225: 4.8 a 6.8 V. MG90S: 4.8 a 6.0 V. El máximo seguro para todo el brazo es <strong>6.0 V</strong>. Nunca alimentes los servos desde el ESP32.</div>
+<p>Si el LED "CC" de la fuente se enciende al mover, la fuente está limitando corriente: el voltaje cae, los servos pierden fuerza o el ESP32 se reinicia.</p>
+
+<h2 id="pendientes">5. Pendientes conocidos</h2>
+<ul>
+  <li>Cambiar el servo de la <strong>muñeca</strong> (potenciómetro interno dañado). Mientras tanto, limitar su máximo a unos 85°.</li>
+  <li>Subir la fuente de 5.5 V a 6.0 V.</li>
+  <li>Ajustar los límites de la pinza.</li>
+</ul>
+</div></main>
+<div id="pie"></div>
+<script src="assets/js/main.js"></script>
+</body></html>

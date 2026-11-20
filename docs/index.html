@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1117"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link rel="stylesheet" href="assets/css/style.css">
+<title>Brazo Robótico The Genesis · Documentación</title>
+<meta name="description" content="Documentación técnica del brazo robótico The Genesis: funcionamiento, ensamblaje, conexiones, código y diseño CAD.">
+</head><body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div id="cabecera"></div>
+<noscript><p class="wrap"><a href="index.html">Inicio</a> · <a href="funcionamiento.html">Cómo funciona</a> · <a href="ensamblaje.html">Ensamblaje</a> · <a href="conexiones.html">Conexiones</a> · <a href="codigo.html">Códigos</a> · <a href="cad.html">CAD</a></p></noscript>
+<section class="hero"><div class="wrap">
+  <span class="etiqueta">Proyecto de robótica · v2</span>
+  <h1>Brazo Robótico <span style="color:var(--acento)">The Genesis</span></h1>
+  <p class="lead">Un brazo de 6 articulaciones controlado desde una página web, con gemelo digital 3D, visión por cámara y banda transportadora. Aquí está todo lo que necesitas saber sobre él.</p>
+  <div class="botones">
+    <a class="btn primario" href="funcionamiento.html"><i class="bi bi-play-circle"></i> Cómo funciona</a>
+    <a class="btn" href="cad.html"><i class="bi bi-box"></i> Ver el modelo 3D</a>
+    <a class="btn" data-repo=""><i class="bi bi-github"></i> Código en GitHub</a>
+  </div>
+</div></section>
+
+<main id="contenido"><div class="wrap">
+  <div class="alerta"><strong><i class="bi bi-exclamation-triangle"></i> Si estás frente al brazo</strong>Mantén las manos fuera de su alcance mientras esté encendido. Solo el equipo del proyecto debe moverlo o conectarlo.</div>
+
+  <div class="dato">
+    <div><b>6</b><span>articulaciones</span></div>
+    <div><b>7</b><span>servomotores</span></div>
+    <div><b>50 Hz</b><span>lazo de control</span></div>
+    <div><b>5 y 7 cm</b><span>cubos que reconoce</span></div>
+  </div>
+
+  <h2>Lo esencial en 1 minuto</h2>
+  <div class="rejilla">
+    <div class="tarjeta"><h3><i class="bi bi-cpu"></i> Cerebro</h3><p>Un <strong>ESP32</strong> recibe órdenes por USB y mueve los servos mediante un driver <strong>PCA9685</strong>, con arranques y frenados suaves.</p></div>
+    <div class="tarjeta"><h3><i class="bi bi-window-desktop"></i> Interfaz web</h3><p>Una página en la laptop (y el celular) permite mover cada articulación, guardar poses y reproducir secuencias.</p></div>
+    <div class="tarjeta"><h3><i class="bi bi-badge-3d"></i> Gemelo digital</h3><p>Un modelo 3D en pantalla copia en tiempo real la posición que pide el ESP32.</p></div>
+    <div class="tarjeta"><h3><i class="bi bi-camera-video"></i> Visión</h3><p>Una cámara detecta cubos por color y mide su tamaño en centímetros con OpenCV.</p></div>
+    <div class="tarjeta"><h3><i class="bi bi-arrow-left-right"></i> Banda</h3><p>Un motor DC con puente H TC1508A mueve una banda transportadora, con paro automático de seguridad.</p></div>
+    <div class="tarjeta"><h3><i class="bi bi-shield-check"></i> Seguridad</h3><p>Límites de ángulo guardados en el ESP32, botón STOP y apagado de la banda si se pierde la comunicación.</p></div>
+  </div>
+
+  <h2>Explora la documentación</h2>
+  <div class="rejilla">
+    <a class="tarjeta" href="funcionamiento.html"><h3><i class="bi bi-gear-wide-connected"></i> Cómo funciona</h3><p>Articulaciones, programación, gemelo digital, visión, IA, banda e interfaz.</p></a>
+    <a class="tarjeta" href="ensamblaje.html"><h3><i class="bi bi-wrench-adjustable"></i> Guía de ensamblaje</h3><p>Componentes, orden de montaje y calibración inicial.</p></a>
+    <a class="tarjeta" href="conexiones.html"><h3><i class="bi bi-diagram-3"></i> Diagrama de conexiones</h3><p>Pines, alimentación y reglas de seguridad eléctrica.</p></a>
+    <a class="tarjeta" href="codigo.html"><h3><i class="bi bi-code-slash"></i> Repositorio de códigos</h3><p>Estructura del código, protocolo serie e instalación.</p></a>
+    <a class="tarjeta" href="cad.html"><h3><i class="bi bi-box"></i> Diseño CAD</h3><p>Modelo 3D interactivo del brazo, con las medidas clave.</p></a>
+  </div>
+</div></main>
+<div id="pie"></div>
+<script src="assets/js/main.js"></script>
+</body></html>

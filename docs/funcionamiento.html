@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d1117"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"><link rel="stylesheet" href="assets/css/style.css">
+<title>Cómo funciona · Brazo Robótico The Genesis</title>
+<meta name="description" content="Cómo funciona el brazo robótico: articulaciones, firmware, servidor, gemelo digital, visión artificial, banda e interfaz.">
+</head><body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<div id="cabecera"></div>
+<main id="contenido"><div class="wrap">
+<div class="cab-pagina"><span class="etiqueta">Funcionamiento</span><h1>Cómo funciona el brazo</h1><p>De la orden en la pantalla al movimiento del servo.</p></div>
+
+<h2 id="flujo">1. Flujo completo de una orden</h2>
+<ol class="pasos">
+  <li><strong>Mueves una barra en la página</strong>El navegador envía el ángulo al servidor (una petición a la vez, siempre con el valor más reciente, para que no se acumule retraso).</li>
+  <li><strong>El servidor lo manda al ESP32</strong>Como texto por USB-Serial a 115200 baudios, por ejemplo <code>J2 120</code>. Envía hasta 50 órdenes por segundo.</li>
+  <li><strong>El ESP32 valida y planifica</strong>Recorta el ángulo a los límites guardados y calcula un perfil trapezoidal: acelera, mantiene velocidad y frena justo en el objetivo.</li>
+  <li><strong>El PCA9685 genera el pulso</strong>Por I2C recibe el ancho de pulso: <code>pulso = 500 + (ángulo/180) × 2000</code> µs, o sea 0° = 500 µs y 180° = 2500 µs.</li>
+  <li><strong>El ESP32 reporta su posición</strong>20 veces por segundo. El servidor la reenvía a la página y el gemelo 3D la copia.</li>
+</ol>
+<div class="aviso"><strong>Dato importante</strong>Los servos no tienen sensor legible por el ESP32. La posición que se ve en pantalla es la que se le <em>pide</em> al servo, no una medición real.</div>
+
+<h2 id="articulaciones">2. Las articulaciones</h2>
+<div class="tabla"><table>
+<thead><tr><th>Art.</th><th>Nombre</th><th>Servo(s)</th><th>Canal PCA9685</th><th>HOME de fábrica</th></tr></thead>
+<tbody>
+<tr><td>J0</td><td>Base (giro)</td><td>Motor 1 · DS3225</td><td>0</td><td>95°</td></tr>
+<tr><td>J1</td><td>Hombro</td><td>Motores 2 + 3 · DS3225 ×2</td><td>1 y 2 (el 2 en espejo)</td><td>38°</td></tr>
+<tr><td>J2</td><td>Codo</td><td>Motor 4 · DS3225</td><td>3</td><td>155°</td></tr>
+<tr><td>J3</td><td>Muñeca</td><td>Motor 5 · MG90S</td><td>4</td><td>95°</td></tr>
+<tr><td>J4</td><td>Giro de pinza</td><td>Motor 6 · MG90S</td><td>5</td><td>113°</td></tr>
+<tr><td>J5</td><td>Pinza</td><td>Motor 7 · MG90S</td><td>6</td><td>90°</td></tr>
+</tbody></table></div>
+<p>Son 7 servos para 6 articulaciones porque los dos del hombro trabajan juntos: el servo B siempre recibe el ángulo espejo del A (<code>ángulo_M3 = 180 − ángulo_M2</code>). Los límites de fábrica son 9° a 171° (90 % del recorrido) y se calibran después desde la página.</p>
+
+<h2 id="programacion">3. Cómo se programó</h2>
+<div class="rejilla">
+  <div class="tarjeta"><h3><i class="bi bi-cpu"></i> Firmware (C++)</h3><p>Proyecto PlatformIO para <code>esp32dev</code> con la librería Adafruit PWM Servo Driver. Lazo de control a 50 Hz, protocolo de texto, memoria NVS para límites y HOME.</p></div>
+  <div class="tarjeta"><h3><i class="bi bi-filetype-py"></i> Servidor (Python)</h3><p>Flask + pyserial + OpenCV. Un hilo propio habla con el ESP32; otro reproduce secuencias; otro captura la cámara.</p></div>
+  <div class="tarjeta"><h3><i class="bi bi-filetype-js"></i> Interfaz (JS)</h3><p>HTML/CSS/JavaScript sin frameworks pesados. Three.js local para el gemelo, así funciona sin internet.</p></div>
+</div>
+<h3>Perfil de movimiento trapezoidal</h3>
+<p>Para que los movimientos sean suaves, cada articulación limita velocidad y aceleración. La velocidad máxima desde la que aún puede frenar a tiempo (versión discreta, para pasos de 20 ms) es:</p>
+<div class="bloque"><pre><code>v = a · ( √(dt²/4 + 2·|e| / a) − dt/2 )
+e = distancia que falta · a = aceleración máxima · dt = 0.02 s</code></pre></div>
+<div class="tabla"><table>
+<thead><tr><th>Articulación</th><th>Vel. máx.</th><th>Acel. máx.</th></tr></thead>
+<tbody><tr><td>Base y Codo</td><td>180 °/s</td><td>500 °/s²</td></tr>
+<tr><td>Hombro</td><td>150 °/s</td><td>400 °/s²</td></tr>
+<tr><td>Muñeca, giro y pinza</td><td>300 °/s</td><td>1500 °/s²</td></tr></tbody></table></div>
+
+<h2 id="seguridad">4. Seguridad</h2>
+<ul>
+  <li>Los <strong>límites y el HOME viven solo en el ESP32</strong>. Aunque la web mande otro valor, el firmware lo recorta.</li>
+  <li><strong>STOP</strong> (tecla Esc) congela el brazo donde está, sin soltar los servos, para que no caiga.</li>
+  <li>Cada límite deja al menos 10° de recorrido y debe estar entre 0° y 180°.</li>
+  <li>El hombro acoplado nunca recibe ángulos distintos en sus dos servos.</li>
+</ul>
+
+<h2 id="gemelo">5. Gemelo digital 3D</h2>
+<p>El modelo <code>brazo_articulado.glb</code> se mueve con los ángulos que reporta el ESP32. Para alinear modelo y brazo real, cada articulación tiene un <em>cero</em> y un <em>sentido</em> (+1 o −1) guardados en <code>gemelo.json</code>:</p>
+<div class="bloque"><pre><code>ángulo_modelo = sentido × (ángulo_servo − cero)</code></pre></div>
+<p>La pinza es de cremalleras: se abre 85 mm y el modelo calcula su apertura entre 45 y 85 mm. La interfaz también muestra las coordenadas de la punta de la pinza. Puedes ver el modelo en la sección <a href="cad.html">Diseño CAD</a>.</p>
+
+<h2 id="vision">6. Visión artificial e inteligencia artificial</h2>
+<h3>Hoy: visión clásica con OpenCV</h3>
+<ol class="pasos">
+  <li><strong>Captura</strong>1280 × 720 en su propio hilo, para no frenar el control.</li>
+  <li><strong>Color</strong>Convierte a HSV y filtra rojo, verde, azul y amarillo.</li>
+  <li><strong>Forma</strong>Limpia ruido, busca contornos y calcula el rectángulo mínimo: centro, lado y ángulo.</li>
+  <li><strong>Tamaño</strong>Con la calibración de píxeles por cm clasifica el cubo como de 5 o 7 cm (tolerancia ±20 %).</li>
+</ol>
+<p>Acepta una cámara USB (Logitech Brio 100) o un teléfono por WiFi con la app IP Webcam.</p>
+<div class="pendiente"><strong>Siguiente paso: IA</strong>Está planeado entrenar un modelo YOLO con fotos propias de los cubos para obtener centro y ángulo con más robustez, usando la GPU de la laptop nueva. El detector por color se quedaría como respaldo. <em>Aún no está integrado.</em></div>
+
+<h2 id="banda">7. Banda transportadora</h2>
+<p>Un motor DC se maneja con un puente H <strong>TC1508A</strong> desde dos pines PWM del ESP32 (GPIO25 y GPIO26) a 1 kHz. La velocidad es un porcentaje de potencia (no una velocidad medida, porque no hay encoder). Protecciones:</p>
+<ul>
+  <li>Arranca siempre apagada y no recuerda su estado tras reiniciar.</li>
+  <li>El navegador renueva un permiso de marcha cada 400 ms. Sin él, el servidor apaga la banda en unos 1.5 s.</li>
+  <li>El ESP32 corta la potencia si pasan 2 s sin renovación USB.</li>
+  <li>No permite invertir el giro sin detener antes el motor.</li>
+</ul>
+
+<h2 id="interfaz">8. La interfaz web</h2>
+<ul>
+  <li><strong>Control de articulaciones</strong> con una barra por articulación, botón HOME y velocidad general (25 %, 50 %, 100 %).</li>
+  <li><strong>Poses:</strong> guarda una posición con nombre y vuelve a ella con un clic.</li>
+  <li><strong>Secuencias:</strong> lista de poses con pausas que se reproduce en orden, con opción de repetir.</li>
+  <li><strong>Gemelo digital</strong> con vistas del brazo y de la pinza.</li>
+  <li><strong>Cámara</strong> con detecciones, ajustes de color, exposición y calibración.</li>
+  <li><strong>Banda</strong> con velocidad, sentido y botón de paro.</li>
+  <li><strong>Calibración</strong> de límites y HOME, guardados en el ESP32.</li>
+</ul>
+</div></main>
+<div id="pie"></div>
+<script src="assets/js/main.js"></script>
+</body></html>

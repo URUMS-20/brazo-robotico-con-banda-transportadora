@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "base": {
+    "cero": 95.0,
+    "sentido": -1
+  },
+  "hombro": {
+    "cero": 156.0,
+    "sentido": -1
+  },
+  "codo": {
+    "cero": 87.0,
+    "sentido": 1
+  },
+  "muneca": {
+    "cero": 76.0,
+    "sentido": 1
+  },
+  "giro": {
+    "cero": 95.0,
+    "sentido": 1
+  },
+  "pinza": {
+    "abierta": 9.0,
+    "sentido_cierre": 1
+  }
+}
